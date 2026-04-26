@@ -355,18 +355,15 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 @media (max-width: 720px) {
   .hero__globe { bottom: -52vw; width: 180vw; height: 180vw; }
 }
-/* On light theme: tighten the mask + add a soft vignette so text stays readable */
-[data-theme="light"] .hero__globe {
-  -webkit-mask-image: radial-gradient(ellipse 58% 48% at 50% 95%, #000 55%, transparent 82%);
-          mask-image: radial-gradient(ellipse 58% 48% at 50% 95%, #000 55%, transparent 82%);
-  opacity: 0.92;
-}
+/* On light theme: keep the same mask shape as dark (so the globe is visible),
+   add a soft top-of-globe vignette so the daytime Earth texture doesn't fight
+   with hero text directly above it. */
 [data-theme="light"] .hero::after {
   content: "";
   position: absolute; left: 0; right: 0; bottom: 0;
-  height: 35%; pointer-events: none; z-index: 1;
+  height: 30%; pointer-events: none; z-index: 1;
   background: linear-gradient(to top,
-    rgba(246, 248, 251, 0.55) 0%,
+    rgba(246, 248, 251, 0.40) 0%,
     rgba(246, 248, 251, 0)   100%);
 }
 [data-theme="light"] .hero__lead   { text-shadow: 0 1px 0 rgba(255,255,255,0.55); }

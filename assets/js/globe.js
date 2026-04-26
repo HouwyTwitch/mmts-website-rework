@@ -1,10 +1,12 @@
 /* =========================================================
    MMTS — 3D Globe (theme-aware)
    - Static thin parabolic arcs
-   - Packets travel along the SAME parabolic curve (slerp + parabola)
-     in BOTH directions
-   - Smooth single-tween camera flights
-   - Clean label rebuild on language change (no overlap)
+   - "Packets" = a short bright dash that travels along the SAME arc
+     curve via globe.gl's built-in arcDash animation. This guarantees
+     packets fly along the parabola in 3D, never along the surface.
+   - Bidirectional: two comet entries per segment (one each way).
+   - Lang change rewrites text on existing label DOM nodes (no overlap).
+   - No auto-rotation. Globe only moves on user input.
    ========================================================= */
 
 (function () {
@@ -18,16 +20,9 @@
   }
 
   const { POPs, CITIES, SEGMENTS } = window.MMTS_NETWORK;
-
-  const TAU = Math.PI * 2;
-  const RAD = Math.PI / 180;
-  const DEG = 180 / Math.PI;
-  /* globe.gl computes arc altitude as: arcAltitudeAutoScale × geodesicDistance(rad).
-     We mirror that exactly so packets ride the SAME parabola the line traces. */
+  /* Must match globe.gl's arcAltitudeAutoScale call below — this scale
+     also controls the apex of the parabola the comet rides. */
   const ARC_ALT_SCALE = 0.5;
-  /* Each line keeps a small minimum lift even for very short hops, so packets
-     are clearly off the surface for the whole journey. */
-  const MIN_PEAK_ALT  = 0.12;
 
   function cssVar(name) {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -42,34 +37,6 @@
         : "https://unpkg.com/three-globe/example/img/earth-night.jpg",
       bumpTexture: "https://unpkg.com/three-globe/example/img/earth-topology.png"
     };
-  }
-
-  /* --- Spherical helpers --- */
-  function latLngToVec(lat, lng) {
-    const φ = lat * RAD, λ = lng * RAD;
-    const cosφ = Math.cos(φ);
-    return [cosφ * Math.cos(λ), Math.sin(φ), cosφ * Math.sin(λ)];
-  }
-  function vecToLatLng(v) {
-    const r = Math.hypot(v[0], v[1], v[2]);
-    return { lat: Math.asin(v[1] / r) * DEG, lng: Math.atan2(v[2], v[0]) * DEG };
-  }
-  /* Slerp on the unit sphere — produces points along the great circle arc */
-  function slerp(a, b, t) {
-    let dot = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    dot = Math.min(1, Math.max(-1, dot));
-    const ω = Math.acos(dot);
-    if (ω < 1e-6) return a;
-    const sinω = Math.sin(ω);
-    const k1 = Math.sin((1 - t) * ω) / sinω;
-    const k2 = Math.sin(t * ω) / sinω;
-    return [a[0]*k1 + b[0]*k2, a[1]*k1 + b[1]*k2, a[2]*k1 + b[2]*k2];
-  }
-  /* Great-circle distance in radians (0..π) — matches what globe.gl uses internally */
-  function gcDistRad(a, b) {
-    let dot = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    dot = Math.min(1, Math.max(-1, dot));
-    return Math.acos(dot);
   }
 
   function easeInOutCubic(t) {
@@ -107,101 +74,108 @@
       .bumpImageUrl(assets.bumpTexture)
       .atmosphereColor(atmos)
       .atmosphereAltitude(0.17)
-      .arcColor((d) => (d.status === "ready" ? arcReady : arcSoon))
-      .pointColor((d) => (d.kind === "mover" ? arcReady : point));
+      .arcColor((d) => {
+        if (d.role === "comet") {
+          /* brighter, almost-white tint for the "packet" so it pops on the line */
+          return d.status === "ready" ? "#f4fffb" : "#dcf0ff";
+        }
+        return d.status === "ready" ? arcReady : arcSoon;
+      })
+      .pointColor(() => point);
   }
 
   function build(el, opts) {
     opts = opts || {};
     const lang = () => (document.documentElement.lang === "ru" ? "ru" : "en");
 
-    function popView(p) {
-      return {
-        kind: "pop",
-        name: lang() === "ru" ? p.name_ru : p.name_en,
-        country: lang() === "ru" ? p.country_ru : p.country_en,
-        site: p.site,
-        lat: p.lat, lng: p.lng,
-        size: 0.55, status: "colo"
-      };
-    }
-    function cityView(c) {
-      return {
-        kind: "city",
-        name: lang() === "ru" ? c.name_ru : c.name_en,
-        lat: c.lat, lng: c.lng,
-        size: 0.16, status: c.status
-      };
-    }
+    /* ---- POP + transit cities (static dots on surface) ---- */
+    const popsView = POPs.map((p) => ({
+      kind: "pop",
+      ru: p.name_ru, en: p.name_en, country_ru: p.country_ru, country_en: p.country_en,
+      site: p.site, lat: p.lat, lng: p.lng, size: 0.55, status: "colo"
+    }));
+    const cityView = CITIES.map((c) => ({
+      kind: "city",
+      ru: c.name_ru, en: c.name_en, lat: c.lat, lng: c.lng,
+      size: 0.16, status: c.status
+    }));
 
-    let popsData    = POPs.map(popView);
-    let cityData    = CITIES.map(cityView);
-    const staticPts = () => [...cityData, ...popsData];
-
-    /* Build movers — TWO per segment (forward + reverse), but with calm speeds and
-       big phase offsets so visually you only ever see ~1-2 packets per line at once. */
-    const movers = [];
+    /* ---- Arcs: 1 static line + 2 comets (forward + reverse) per segment.
+            globe.gl renders each arc as an extruded TubeGeometry along a
+            CatmullRom curve through start → midAtAltitude → end, so the
+            visible dash automatically rides the parabola in 3D space. ---- */
+    const arcsRendered = [];
     SEGMENTS.forEach((s, i) => {
-      const a  = latLngToVec(s.startLat, s.startLng);
-      const b  = latLngToVec(s.endLat,   s.endLng);
-      const rad = gcDistRad(a, b);                              /* 0..π */
-      /* Peak altitude in the SAME units globe.gl uses for arcs */
-      const peakAlt = Math.max(MIN_PEAK_ALT, ARC_ALT_SCALE * rad);
-      /* Slow & uniform: every packet finishes its trip in ~14-22 s.
-         Longer arcs get a hair faster so packets don't crawl on continental hops. */
-      const baseSpeed = 0.00065 + Math.min(0.00045, rad * 0.0005);
-      movers.push({
-        a, b, peakAlt, status: s.status,
-        t: (i * 0.317) % 1, speed: baseSpeed
+      arcsRendered.push({
+        role: "line",
+        startLat: s.startLat, startLng: s.startLng,
+        endLat:   s.endLat,   endLng:   s.endLng,
+        status: s.status, _id: `${i}:l`
       });
-      movers.push({
-        a: b, b: a, peakAlt, status: s.status,
-        /* Half-cycle behind so forward & reverse pass each other mid-arc */
-        t: ((i * 0.317) + 0.5) % 1, speed: baseSpeed
+      /* forward comet */
+      arcsRendered.push({
+        role: "comet",
+        startLat: s.startLat, startLng: s.startLng,
+        endLat:   s.endLat,   endLng:   s.endLng,
+        status: s.status, _id: `${i}:f`,
+        phase: (i * 0.317) % 1
+      });
+      /* reverse comet — start/end swapped, half-cycle offset */
+      arcsRendered.push({
+        role: "comet",
+        startLat: s.endLat,   startLng: s.endLng,
+        endLat:   s.startLat, endLng:   s.startLng,
+        status: s.status, _id: `${i}:r`,
+        phase: ((i * 0.317) + 0.5) % 1
       });
     });
-
-    function moverPoint(m) {
-      const v   = slerp(m.a, m.b, m.t);
-      const ll  = vecToLatLng(v);
-      /* Parabolic altitude: 4·t·(1−t)·peak — peaks at t=0.5, zero at endpoints */
-      const alt = 4 * m.t * (1 - m.t) * m.peakAlt + 0.004;
-      return {
-        kind: "mover",
-        status: m.status,
-        lat: ll.lat, lng: ll.lng,
-        alt, size: 0.16
-      };
-    }
 
     const globe = Globe({ rendererConfig: { antialias: true, alpha: true } })(el)
       .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true)
       .showGraticules(opts.showGraticules !== false)
 
-      /* Thin static parabolic arcs */
-      .arcsData(SEGMENTS)
+      /* === ARCS LAYER (lines + traveling packets) === */
+      .arcsData(arcsRendered)
       .arcStartLat((d) => d.startLat).arcStartLng((d) => d.startLng)
       .arcEndLat((d) => d.endLat).arcEndLng((d) => d.endLng)
       .arcAltitudeAutoScale(ARC_ALT_SCALE)
-      .arcStroke(0.16)               /* thinner */
-      .arcDashLength(1).arcDashGap(0).arcDashAnimateTime(0)
+      /* Lines: thin steady stroke. Comets: thicker so the "ball" reads. */
+      .arcStroke((d) => (d.role === "comet" ? 0.7 : 0.18))
+      /* Lines: full dash (solid). Comets: tiny dash with big gap → one
+         visible bright segment per cycle, looking like a packet. */
+      .arcDashLength((d) => (d.role === "comet" ? 0.04 : 1))
+      .arcDashGap((d)    => (d.role === "comet" ? 4    : 0))
+      /* Stagger comet phases so packets on neighbouring lines don't sync */
+      .arcDashInitialGap((d) => (d.role === "comet" ? d.phase * 4 : 0))
+      /* Slow, calm travel — one full cycle ~14s (long arcs feel similar
+         to short arcs because dash is parameterised in arc-length units) */
+      .arcDashAnimateTime((d) => (d.role === "comet" ? 14000 : 0))
       .arcsTransitionDuration(0)
 
-      /* Cities + PoPs + moving packets, all as points */
-      .pointsData([...staticPts(), ...movers.map(moverPoint)])
-      .pointAltitude((d) => (d.kind === "mover" ? d.alt : 0.005))
+      /* === STATIC POINTS for cities + PoPs (surface dots) === */
+      .pointsMerge(false)
+      .pointsData([...cityView, ...popsView])
+      .pointAltitude(0.005)
       .pointRadius((d) => d.size)
       .pointResolution(12)
 
-      /* PoP labels via HTML (clean, themable) */
-      .htmlElementsData(popsData.slice())
+      /* === HTML LABELS for PoPs only (clean text bubbles) === */
+      .htmlElementsData(popsView)
       .htmlLat((d) => d.lat).htmlLng((d) => d.lng)
       .htmlAltitude(0.012)
-      .htmlElement(makeLabel)
+      .htmlElement((d) => {
+        const node = document.createElement("div");
+        node.className = "globe-html-label";
+        node.textContent = lang() === "ru" ? d.ru : d.en;
+        /* Store the live DOM node back on the datum so we can rewrite text
+           on language change WITHOUT touching the data binding (which would
+           cause three-globe to spawn duplicate elements). */
+        d._domEl = node;
+        return node;
+      })
 
-      .ringsData([])
-      .ringMaxRadius(2.4).ringPropagationSpeed(1.15).ringRepeatPeriod(2400).ringAltitude(0.005);
+      .ringsData([]);
 
     paint(globe);
 
@@ -212,8 +186,7 @@
       }
     }
 
-    /* Controls — silky and predictable. Auto-rotation is OFF everywhere; the
-       globe only moves when the user grabs it. */
+    /* Controls — auto-rotate disabled everywhere. */
     const ctrl = globe.controls();
     ctrl.enableDamping = true;
     ctrl.dampingFactor = 0.09;
@@ -243,51 +216,34 @@
     });
     ro.observe(el);
 
-    /* Animate movers via rAF — independent of pixel ratio, pauses when tab hidden */
-    let animId = 0, last = performance.now();
-    function tick(now) {
-      const dt = Math.min(0.1, (now - last) / 1000);
-      last = now;
-      for (let i = 0; i < movers.length; i++) {
-        movers[i].t += movers[i].speed * dt * 60; /* keep 60fps-equivalent units */
-        if (movers[i].t >= 1) movers[i].t -= 1;
-      }
-      globe.pointsData([...staticPts(), ...movers.map(moverPoint)]);
-      animId = requestAnimationFrame(tick);
-    }
-    animId = requestAnimationFrame(tick);
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animId); animId = 0;
-      } else if (!animId) {
-        last = performance.now();
-        animId = requestAnimationFrame(tick);
-      }
-    });
-
-    /* Click → bubble city selection */
+    /* Click → bubble city selection (only the static city/pop points). */
     globe.onPointClick((d) => {
-      el.dispatchEvent(new CustomEvent("mmts:globe:select", { detail: d, bubbles: true }));
+      el.dispatchEvent(new CustomEvent("mmts:globe:select", {
+        detail: { ...d, name: lang() === "ru" ? d.ru : d.en },
+        bubbles: true
+      }));
     });
 
-    /* Theme + lang reactivity */
+    /* Theme reactivity */
     document.addEventListener("mmts:themechange", () => paint(globe));
+
+    /* Language reactivity — rewrite text on the LIVE label nodes; do not
+       touch htmlElementsData, otherwise three-globe spawns duplicates. */
     document.addEventListener("mmts:langchange", () => {
-      cityData = CITIES.map(cityView);
-      popsData = POPs.map(popView);
-      /* Force a clean rebuild of HTML labels → no DOM stacking */
-      globe.htmlElementsData([]);
-      requestAnimationFrame(() => globe.htmlElementsData(popsData.slice()));
-      globe.pointsData([...staticPts(), ...movers.map(moverPoint)]);
+      const cur = lang();
+      popsView.forEach((p) => {
+        if (p._domEl) p._domEl.textContent = cur === "ru" ? p.ru : p.en;
+      });
+      cityView.forEach((c) => { /* no DOM but update for tooltips/clicks */ });
     });
 
-    /* Smooth, single-tween camera flight (no zoom-out → zoom-in pop) */
+    /* Single smooth ease-in-out tween — no zoom-out → zoom-in pop. */
     function flyTo(targetLat, targetLng, targetAlt, duration) {
       const pov = globe.pointOfView() || {};
       const fromLat = isFinite(pov.lat) ? pov.lat : targetLat;
       const fromLng = isFinite(pov.lng) ? pov.lng : targetLng;
       const fromAlt = isFinite(pov.altitude) ? pov.altitude : 2.2;
-      const dur = duration || 1600;
+      const dur = duration || 1700;
       const start = performance.now();
       function step(now) {
         const tt = Math.min(1, (now - start) / dur);
@@ -302,23 +258,13 @@
       requestAnimationFrame(step);
     }
 
-    /* Cleanup */
     el.addEventListener("mmts:globe:destroy", () => {
-      cancelAnimationFrame(animId);
       cancelAnimationFrame(rafId);
       ro.disconnect();
     }, { once: true });
 
-    /* Public API */
     globe.flyTo = flyTo;
     return globe;
-  }
-
-  function makeLabel(d) {
-    const el = document.createElement("div");
-    el.className = "globe-html-label";
-    el.textContent = d.name; /* safe — textContent escapes */
-    return el;
   }
 
   function initHero(selector) {

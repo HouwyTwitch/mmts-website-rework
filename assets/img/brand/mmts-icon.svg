@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="MMTS icon">
+  <circle cx="64" cy="64" r="62" fill="#6f84d6"/>
+  <g stroke="#111523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95">
+    <path d="M27 76 L42 53 L58 58 L66 35 L80 39 L92 58 L84 78 L61 84 L45 99 L31 88 Z"/>
+    <path d="M58 58 L61 84"/>
+    <path d="M42 53 L45 99"/>
+    <path d="M66 35 L84 78"/>
+    <path d="M80 39 L45 99"/>
+    <path d="M92 58 L31 88"/>
+  </g>
+  <g fill="#111523">
+    <circle cx="27" cy="76" r="4"/>
+    <circle cx="42" cy="53" r="4"/>
+    <circle cx="58" cy="58" r="4"/>
+    <circle cx="66" cy="35" r="4"/>
+    <circle cx="80" cy="39" r="4"/>
+    <circle cx="92" cy="58" r="4"/>
+    <circle cx="84" cy="78" r="4"/>
+    <circle cx="61" cy="84" r="4"/>
+    <circle cx="45" cy="99" r="4"/>
+    <circle cx="31" cy="88" r="4"/>
+  </g>
+</svg>

@@ -22,9 +22,12 @@
   const TAU = Math.PI * 2;
   const RAD = Math.PI / 180;
   const DEG = 180 / Math.PI;
-  /* globe.gl arc altitude formula: alt ≈ arcAltitudeAutoScale × geoDistanceNormalised
-     We mirror it for our packet altitude so the packet rides the SAME parabola. */
-  const ARC_ALT_SCALE = 0.32;
+  /* globe.gl computes arc altitude as: arcAltitudeAutoScale × geodesicDistance(rad).
+     We mirror that exactly so packets ride the SAME parabola the line traces. */
+  const ARC_ALT_SCALE = 0.5;
+  /* Each line keeps a small minimum lift even for very short hops, so packets
+     are clearly off the surface for the whole journey. */
+  const MIN_PEAK_ALT  = 0.12;
 
   function cssVar(name) {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -62,11 +65,11 @@
     const k2 = Math.sin(t * ω) / sinω;
     return [a[0]*k1 + b[0]*k2, a[1]*k1 + b[1]*k2, a[2]*k1 + b[2]*k2];
   }
-  /* Normalised great-circle distance (0..1) — input is the dot product of unit vecs */
-  function gcDistNorm(a, b) {
+  /* Great-circle distance in radians (0..π) — matches what globe.gl uses internally */
+  function gcDistRad(a, b) {
     let dot = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     dot = Math.min(1, Math.max(-1, dot));
-    return Math.acos(dot) / Math.PI;
+    return Math.acos(dot);
   }
 
   function easeInOutCubic(t) {
@@ -135,33 +138,39 @@
     let cityData    = CITIES.map(cityView);
     const staticPts = () => [...cityData, ...popsData];
 
-    /* Build movers — TWO per segment (forward + reverse) so packets travel both ways. */
+    /* Build movers — TWO per segment (forward + reverse), but with calm speeds and
+       big phase offsets so visually you only ever see ~1-2 packets per line at once. */
     const movers = [];
     SEGMENTS.forEach((s, i) => {
       const a  = latLngToVec(s.startLat, s.startLng);
       const b  = latLngToVec(s.endLat,   s.endLng);
-      const dn = gcDistNorm(a, b);          // 0..1
-      const peakAlt = ARC_ALT_SCALE * dn;   // matches arcAltitudeAutoScale
-      const speed = Math.max(0.0035, 0.012 / Math.max(0.05, dn)); // shorter arcs → slower packets
+      const rad = gcDistRad(a, b);                              /* 0..π */
+      /* Peak altitude in the SAME units globe.gl uses for arcs */
+      const peakAlt = Math.max(MIN_PEAK_ALT, ARC_ALT_SCALE * rad);
+      /* Slow & uniform: every packet finishes its trip in ~14-22 s.
+         Longer arcs get a hair faster so packets don't crawl on continental hops. */
+      const baseSpeed = 0.00065 + Math.min(0.00045, rad * 0.0005);
       movers.push({
         a, b, peakAlt, status: s.status,
-        t: (i * 0.137) % 1, speed
+        t: (i * 0.317) % 1, speed: baseSpeed
       });
       movers.push({
         a: b, b: a, peakAlt, status: s.status,
-        t: ((i * 0.137) + 0.5) % 1, speed
+        /* Half-cycle behind so forward & reverse pass each other mid-arc */
+        t: ((i * 0.317) + 0.5) % 1, speed: baseSpeed
       });
     });
 
     function moverPoint(m) {
       const v   = slerp(m.a, m.b, m.t);
       const ll  = vecToLatLng(v);
-      const alt = 4 * m.t * (1 - m.t) * m.peakAlt + 0.005; /* parabola; matches arc shape */
+      /* Parabolic altitude: 4·t·(1−t)·peak — peaks at t=0.5, zero at endpoints */
+      const alt = 4 * m.t * (1 - m.t) * m.peakAlt + 0.004;
       return {
         kind: "mover",
         status: m.status,
         lat: ll.lat, lng: ll.lng,
-        alt, size: 0.18
+        alt, size: 0.16
       };
     }
 
@@ -203,33 +212,19 @@
       }
     }
 
-    /* Controls — silky and predictable */
+    /* Controls — silky and predictable. Auto-rotation is OFF everywhere; the
+       globe only moves when the user grabs it. */
     const ctrl = globe.controls();
     ctrl.enableDamping = true;
     ctrl.dampingFactor = 0.09;
     ctrl.rotateSpeed = 0.42;
     ctrl.zoomSpeed = 0.55;
-    ctrl.autoRotate = !!opts.autoRotate;
-    ctrl.autoRotateSpeed = opts.autoRotateSpeed || 0.18;
+    ctrl.autoRotate = false;
+    ctrl.autoRotateSpeed = 0;
     ctrl.enableZoom = !!opts.enableZoom;
     ctrl.enablePan = false;
     ctrl.minDistance = 105;
     ctrl.maxDistance = 800;
-
-    /* Pause auto-rotate while interacting */
-    let resumeTimer = null;
-    const pause = () => {
-      if (!opts.autoRotate) return;
-      ctrl.autoRotate = false;
-      if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
-    };
-    const resume = () => {
-      if (!opts.autoRotate) return;
-      if (resumeTimer) clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => { ctrl.autoRotate = true; }, 3500);
-    };
-    ctrl.addEventListener("start", pause);
-    ctrl.addEventListener("end", resume);
 
     /* Initial camera */
     globe.pointOfView({ lat: 50, lng: 50, altitude: opts.altitude || 2.2 }, 0);
@@ -311,7 +306,6 @@
     el.addEventListener("mmts:globe:destroy", () => {
       cancelAnimationFrame(animId);
       cancelAnimationFrame(rafId);
-      if (resumeTimer) clearTimeout(resumeTimer);
       ro.disconnect();
     }, { once: true });
 
@@ -330,12 +324,12 @@
   function initHero(selector) {
     const el = document.querySelector(selector || "#globe-hero");
     if (!el) return null;
-    return build(el, { autoRotate: true, autoRotateSpeed: 0.22, enableZoom: false, altitude: 1.85, showGraticules: true });
+    return build(el, { enableZoom: false, altitude: 1.85, showGraticules: true });
   }
   function initInteractive(selector) {
     const el = document.querySelector(selector || "#globe-network");
     if (!el) return null;
-    return build(el, { autoRotate: true, autoRotateSpeed: 0.14, enableZoom: true, altitude: 1.6, showGraticules: true });
+    return build(el, { enableZoom: true, altitude: 1.6, showGraticules: true });
   }
 
   window.MMTS_GLOBE = { initHero, initInteractive };

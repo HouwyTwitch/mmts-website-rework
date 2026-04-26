@@ -1,5 +1,5 @@
 /* =========================================================
-   MMTS — 3D Globe (theme-aware)
+   MMTS – 3D Globe (theme-aware)
    - Static thin parabolic arcs
    - "Packets" = a short bright dash that travels along the SAME arc
      curve via globe.gl's built-in arcDash animation. This guarantees
@@ -20,7 +20,7 @@
   }
 
   const { POPs, CITIES, SEGMENTS } = window.MMTS_NETWORK;
-  /* Must match globe.gl's arcAltitudeAutoScale call below — this scale
+  /* Must match globe.gl's arcAltitudeAutoScale call below – this scale
      also controls the apex of the parabola the comet rides. */
   const ARC_ALT_SCALE = 0.5;
 
@@ -53,8 +53,8 @@
   }
 
   function paint(globe) {
-    const arcReady = cssVar("--globe-arc")  || "#2adfc3";
-    const arcSoon  = cssVar("--brand-2")    || "#29c4ff";
+    const arcReady = "#ff4d6a";
+    const arcSoon  = "#ffb547";
     const point    = cssVar("--globe-point")|| "#6ff5dd";
     const atmos    = cssVar("--globe-atmosphere") || "#2adfc3";
     const surface  = cssVar("--globe-color") || "#0d1218";
@@ -120,7 +120,7 @@
         status: s.status, _id: `${i}:f`,
         phase: (i * 0.317) % 1
       });
-      /* reverse comet — start/end swapped, half-cycle offset */
+      /* reverse comet – start/end swapped, half-cycle offset */
       arcsRendered.push({
         role: "comet",
         startLat: s.endLat,   startLng: s.endLng,
@@ -148,7 +148,7 @@
       .arcDashGap((d)    => (d.role === "comet" ? 4    : 0))
       /* Stagger comet phases so packets on neighbouring lines don't sync */
       .arcDashInitialGap((d) => (d.role === "comet" ? d.phase * 4 : 0))
-      /* Slow, calm travel — one full cycle ~14s (long arcs feel similar
+      /* Slow, calm travel – one full cycle ~14s (long arcs feel similar
          to short arcs because dash is parameterised in arc-length units) */
       .arcDashAnimateTime((d) => (d.role === "comet" ? 14000 : 0))
       .arcsTransitionDuration(0)
@@ -186,7 +186,7 @@
       }
     }
 
-    /* Controls — auto-rotate disabled everywhere. */
+    /* Controls – auto-rotate disabled everywhere. */
     const ctrl = globe.controls();
     ctrl.enableDamping = true;
     ctrl.dampingFactor = 0.09;
@@ -227,7 +227,7 @@
     /* Theme reactivity */
     document.addEventListener("mmts:themechange", () => paint(globe));
 
-    /* Language reactivity — rewrite text on the LIVE label nodes; do not
+    /* Language reactivity – rewrite text on the LIVE label nodes; do not
        touch htmlElementsData, otherwise three-globe spawns duplicates. */
     document.addEventListener("mmts:langchange", () => {
       const cur = lang();
@@ -237,7 +237,7 @@
       cityView.forEach((c) => { /* no DOM but update for tooltips/clicks */ });
     });
 
-    /* Single smooth ease-in-out tween — no zoom-out → zoom-in pop. */
+    /* Single smooth ease-in-out tween – no zoom-out → zoom-in pop. */
     function flyTo(targetLat, targetLng, targetAlt, duration) {
       const pov = globe.pointOfView() || {};
       const fromLat = isFinite(pov.lat) ? pov.lat : targetLat;

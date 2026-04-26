@@ -1,5 +1,5 @@
 /* =========================================================
-   MMTS — Theme
+   MMTS – Theme
    Default: system preference. Override via localStorage / button.
    This script is loaded SYNCHRONOUSLY in <head> to avoid FOUC.
    ========================================================= */
@@ -29,7 +29,7 @@
     document.dispatchEvent(new CustomEvent("mmts:themechange", { detail: { theme } }));
   }
 
-  /* Apply IMMEDIATELY (no DOMContentLoaded) — kills FOUC */
+  /* Apply IMMEDIATELY (no DOMContentLoaded) – kills FOUC */
   applyTheme(getStored() || systemTheme(), { save: false });
 
   /* Follow system theme if user hasn't picked one */

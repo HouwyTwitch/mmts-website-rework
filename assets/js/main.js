@@ -1,5 +1,5 @@
 /* =========================================================
-   MMTS — main bindings
+   MMTS – main bindings
    - sticky nav scroll state
    - mobile burger menu
    - reveal-on-scroll

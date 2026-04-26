@@ -1,5 +1,5 @@
 /* =========================================================
-   MMTS — Contact form
+   MMTS – Contact form
    Hardened: no innerHTML, strict client-side validation,
    length caps, character whitelist, opens user's mail client
    via mailto: (no server endpoint to attack).
@@ -47,12 +47,12 @@
     if (!v) return;
 
     /* Build a sanitized mailto URL */
-    const subj = v.subject || "MMTS — заявка с сайта";
+    const subj = v.subject || "MMTS – заявка с сайта";
     const body =
       "Имя: " + v.name + "\n" +
       "E-mail: " + v.email + "\n\n" +
       v.message + "\n\n" +
-      "— отправлено с сайта mmts.su";
+      "– отправлено с сайта mmts.su";
 
     const url = "mailto:sales@mmts.su" +
       "?subject=" + encodeURIComponent(subj) +

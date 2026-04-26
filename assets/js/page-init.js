@@ -1,5 +1,5 @@
 /* =========================================================
-   MMTS — Per-page bootstrapping
+   MMTS – Per-page bootstrapping
    Reads data-page from its own <script> tag and starts the
    appropriate widgets (globe, contact form, etc.).
    ========================================================= */
@@ -40,7 +40,7 @@
         }
         if (search) search.addEventListener("input", filter);
 
-        /* Single smooth tween via globe.flyTo() — no zoom-out → zoom-in pop. */
+        /* Single smooth tween via globe.flyTo() – no zoom-out → zoom-in pop. */
         function focusCity(lat, lng) {
           const pov = globe.pointOfView() || {};
           const curAlt = isFinite(pov.altitude) ? pov.altitude : 1.6;

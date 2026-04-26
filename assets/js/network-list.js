@@ -1,5 +1,5 @@
 /* =========================================================
-   MMTS — Network side list builder
+   MMTS – Network side list builder
    Renders the POP / city list with safe DOM APIs (no innerHTML).
    ========================================================= */
 
@@ -35,7 +35,7 @@
       }))
     ];
 
-    /* Sort: colos first, then ready, then soon — alpha within group */
+    /* Sort: colos first, then ready, then soon – alpha within group */
     const order = { colo: 0, ready: 1, soon: 2 };
     items.sort((a, b) => order[a.status] - order[b.status] || a.name.localeCompare(b.name));
 
@@ -55,7 +55,7 @@
       const middle = document.createElement("div");
       const nameEl = document.createElement("div");
       nameEl.className = "pop-item__name";
-      nameEl.textContent = it.name; /* safe — textContent escapes */
+      nameEl.textContent = it.name; /* safe – textContent escapes */
       middle.appendChild(nameEl);
       if (it.country || it.site) {
         const meta = document.createElement("div");

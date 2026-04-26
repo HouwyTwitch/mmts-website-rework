@@ -1,16 +1,16 @@
 /* =========================================================
-   MMTS — i18n
+   MMTS – i18n
    Default lang: RU. If system lang isn't Russian → EN.
    Override via ?lang=, localStorage, or .lang-toggle button.
    ========================================================= */
 
 const I18N = {
   ru: {
-    "meta.title.home":     "MMTS — Магистральные сети связи",
-    "meta.title.network":  "Сеть — MMTS",
-    "meta.title.services": "Услуги операторам — MMTS",
-    "meta.title.software": "Software — MMTS",
-    "meta.title.contacts": "Контакты — MMTS",
+    "meta.title.home":     "ООО «ММТС» – Магистральные сети связи",
+    "meta.title.network":  "Сеть – ООО «ММТС»",
+    "meta.title.services": "Услуги операторам – ООО «ММТС»",
+    "meta.title.software": "Software – MMTS LLC",
+    "meta.title.contacts": "Контакты – ООО «ММТС»",
     "meta.desc.home":      "Магистральный оператор связи: IP-транзит, Ethernet & VPN, ёмкости, строительство ВОЛС, размещение оборудования.",
 
     "nav.home":     "Главная",
@@ -36,7 +36,7 @@ const I18N = {
     "hero.title.1":   "Соединяем",
     "hero.title.2":   "страны",
     "hero.title.3":   "магистральной сетью",
-    "hero.lead":      "MMTS — частная компания, провайдер магистральной связи и программного обеспечения. Головной офис: Саратов, Россия.",
+    "hero.lead":      "ООО «ММТС» – частная компания, провайдер магистральной связи и программного обеспечения. Головной офис: Саратов, Россия.",
     "hero.cta.primary":   "Наши услуги",
     "hero.cta.secondary": "Карта сети",
     "hero.metric.1.value":"15+",
@@ -51,7 +51,7 @@ const I18N = {
     /* Services overview */
     "services.eyebrow":  "Услуги",
     "services.title":    "Что мы продаём",
-    "services.sub":      "От выделенного канала между ЦОД-ами до глобального IP-транзита — всё на нашей оптике, своим железом.",
+    "services.sub":      "От выделенного канала между ЦОД-ами до глобального IP-транзита – всё на нашей оптике, своим железом.",
 
     "svc.iptransit.title": "IP-транзит",
     "svc.iptransit.text":  "BGP IPv4/IPv6, премиум-аплинки, защита от DDoS, NOC 24×7. Стабильные маршруты до Tier-1.",
@@ -64,27 +64,27 @@ const I18N = {
     "svc.colocation.title":"Размещение",
     "svc.colocation.text": "Юниты, стойки, кросс-коннекты в наших узлах. Резерв по питанию и охлаждению.",
     "svc.lookingglass.title":"Looking Glass",
-    "svc.lookingglass.text":"Прозрачная диагностика — ping, traceroute и BGP-сводка прямо из нашей сети.",
+    "svc.lookingglass.text":"Прозрачная диагностика – ping, traceroute и BGP-сводка прямо из нашей сети.",
 
     /* Network teaser */
     "net.eyebrow": "География",
     "net.title":   "Опорная сеть от Европы до Центральной Азии",
-    "net.sub":     "Маршруты построены так, чтобы пакет шёл коротко и предсказуемо. Каждая точка — наш узел.",
+    "net.sub":     "Маршруты построены так, чтобы пакет шёл коротко и предсказуемо. Каждая точка – наш узел.",
     "net.cta":     "Открыть карту сети",
 
     /* Network page */
     "netpage.title":  "Карта сети",
-    "netpage.sub":    "Точки присутствия и магистральные сегменты MMTS. Кликните по маркеру или городу справа.",
-    "netpage.legend.ready": "В продаже",
-    "netpage.legend.soon":  "Готовится к продаже",
+    "netpage.sub":    "Точки присутствия и магистральные сегменты ООО «ММТС». Кликните по маркеру или городу справа.",
+    "netpage.legend.ready": "Каналы в продаже",
+    "netpage.legend.soon":  "Каналы готовятся к продаже",
     "netpage.legend.colo":  "Колокация",
-    "netpage.list":   "Города и узлы",
+    "netpage.list":   "Города, узлы и каналы",
     "netpage.search": "Поиск города…",
     "netpage.empty":  "Ничего не найдено",
 
     /* Services page */
     "spage.title": "Услуги операторам и бизнесу",
-    "spage.sub":   "Линейка магистральных сервисов MMTS. Подключение в любой нашей точке присутствия — за дни, не недели.",
+    "spage.sub":   "Линейка магистральных сервисов ООО «ММТС». Подключение в любой нашей точке присутствия – за дни, не недели.",
     "spage.cta":   "Запросить расчёт",
 
     /* Software page */
@@ -101,8 +101,8 @@ const I18N = {
     
 
     /* Contacts page */
-    "ctc.title":     "Связаться с MMTS",
-    "ctc.sub":       "NOC работает 24×7. Коммерческий отдел — пн-пт, 8:00-17:00 (UTC+4).",
+    "ctc.title":     "Связаться с ООО «ММТС»",
+    "ctc.sub":       "NOC работает 24×7. Коммерческий отдел – пн-пт, 8:00-17:00 (UTC+4).",
     "ctc.noc":       "NOC (24×7)",
     "ctc.sales":     "Коммерческий отдел",
     "ctc.office":    "Офис",
@@ -116,29 +116,29 @@ const I18N = {
 
     /* CTA banner */
     "cta.title":  "Готовы посчитать ваш канал?",
-    "cta.sub":    "Оставьте заявку — соберём предложение по вашему сценарию: маршрут, скорость, SLA, сроки.",
+    "cta.sub":    "Оставьте заявку – соберём предложение по вашему сценарию: маршрут, скорость, SLA, сроки.",
     "cta.button": "Запросить предложение",
 
     /* Footer */
     "ftr.about":      "О компании",
-    "ftr.aboutText":  "MMTS LLC — независимый магистральный оператор, штаб-квартира в Саратове.",
+    "ftr.aboutText":  "ООО «ММТС» – независимый магистральный оператор, штаб-квартира в Саратове.",
     "ftr.services":   "Услуги",
     "ftr.company":    "Компания",
     "ftr.connect":    "Контакты",
-    "ftr.copy":       "© 2008–2026 ООО «МТТС». Все права защищены.",
+    "ftr.copy":       "© 2008–2026 ООО «ММТС». Все права защищены.",
 
     /* Globe */
     "globe.connections": "магистральных сегментов",
     "globe.points":      "точек присутствия",
-    "globe.cta":         "Перетащите глобус — это интерактивная сеть"
+    "globe.cta":         "Перетащите глобус – это интерактивная сеть"
   },
 
   en: {
-    "meta.title.home":     "MMTS — Backbone Carrier",
-    "meta.title.network":  "Network — MMTS",
-    "meta.title.services": "Services — MMTS",
-    "meta.title.software": "Software — MMTS",
-    "meta.title.contacts": "Contacts — MMTS",
+    "meta.title.home":     "MMTS LLC – Backbone Carrier",
+    "meta.title.network":  "Network – MMTS LLC",
+    "meta.title.services": "Services – MMTS LLC",
+    "meta.title.software": "Software – MMTS LLC",
+    "meta.title.contacts": "Contacts – MMTS LLC",
     "meta.desc.home":      "Backbone carrier: IP transit, Ethernet & VPN, capacity, fiber construction, colocation.",
 
     "nav.home":     "Home",
@@ -177,7 +177,7 @@ const I18N = {
 
     "services.eyebrow":  "Services",
     "services.title":    "What we sell",
-    "services.sub":      "From a dedicated link between data centers to global IP transit — all on our fiber, with our gear.",
+    "services.sub":      "From a dedicated link between data centers to global IP transit – all on our fiber, with our gear.",
 
     "svc.iptransit.title": "IP Transit",
     "svc.iptransit.text":  "BGP IPv4/IPv6, premium upstreams, DDoS mitigation, 24×7 NOC. Stable routes to Tier-1.",
@@ -190,7 +190,7 @@ const I18N = {
     "svc.colocation.title":"Colocation",
     "svc.colocation.text": "Units, racks, cross-connects in our nodes. Power and cooling redundancy.",
     "svc.lookingglass.title":"Looking Glass",
-    "svc.lookingglass.text":"Transparent diagnostics — ping, traceroute and BGP summary straight from our network.",
+    "svc.lookingglass.text":"Transparent diagnostics – ping, traceroute and BGP summary straight from our network.",
 
     "net.eyebrow": "Geography",
     "net.title":   "Backbone from Europe to Central Asia",
@@ -198,21 +198,21 @@ const I18N = {
     "net.cta":     "Open network map",
 
     "netpage.title":  "Network map",
-    "netpage.sub":    "MMTS points of presence and backbone segments. Click a marker or a city on the right.",
-    "netpage.legend.ready": "Ready for sale",
-    "netpage.legend.soon":  "Preparing for sale",
+    "netpage.sub":    "MMTS LLC points of presence and backbone segments. Click a marker or a city on the right.",
+    "netpage.legend.ready": "Channels available",
+    "netpage.legend.soon":  "Channels coming soon",
     "netpage.legend.colo":  "Colocation",
-    "netpage.list":   "Cities & nodes",
+    "netpage.list":   "Cities, nodes & channels",
     "netpage.search": "Search city…",
     "netpage.empty":  "Nothing found",
 
     "spage.title": "Services for carriers and business",
-    "spage.sub":   "MMTS backbone services. Provisioning at any of our PoPs — in days, not weeks.",
+    "spage.sub":   "MMTS LLC backbone services. Provisioning at any of our PoPs – in days, not weeks.",
     "spage.cta":   "Request a quote",
 
     "soft.eyebrow": "Software",
     "soft.title":   "Software",
-    "soft.sub":     "Optical amplifiers play a major role for long-distance inter-DC links. MMTS developed and deployed software for Russian amplifiers to deliver low-latency signal transmission over hundreds of kilometers.",
+    "soft.sub":     "Optical amplifiers play a major role for long-distance inter-DC links. MMTS LLC developed and deployed software for Russian amplifiers to deliver low-latency signal transmission over hundreds of kilometers.",
     "soft.docs.title": "Documents & downloads",
     "soft.body":  "For software-related questions, contact noc@mmts.su.",
     "soft.doc.1": "Programming guide",
@@ -223,7 +223,7 @@ const I18N = {
     
 
     "ctc.title":     "Get in touch",
-    "ctc.sub":       "NOC is on duty 24×7. Sales — Mon-Fri, 8:00-17:00 (UTC+4).",
+    "ctc.sub":       "NOC is on duty 24×7. Sales – Mon-Fri, 8:00-17:00 (UTC+4).",
     "ctc.noc":       "NOC (24×7)",
     "ctc.sales":     "Sales",
     "ctc.office":    "Office",
@@ -236,11 +236,11 @@ const I18N = {
     "ctc.sent":      "Thank you! We'll get back to you within an hour.",
 
     "cta.title":  "Ready to size up your link?",
-    "cta.sub":    "Tell us your route, capacity and SLA — we'll come back with a proposal.",
+    "cta.sub":    "Tell us your route, capacity and SLA – we'll come back with a proposal.",
     "cta.button": "Request a proposal",
 
     "ftr.about":      "About",
-    "ftr.aboutText":  "MMTS LLC — independent backbone carrier, headquartered in Saratov.",
+    "ftr.aboutText":  "MMTS LLC – independent backbone carrier, headquartered in Saratov.",
     "ftr.services":   "Services",
     "ftr.company":    "Company",
     "ftr.connect":    "Contacts",
@@ -248,7 +248,7 @@ const I18N = {
 
     "globe.connections": "backbone segments",
     "globe.points":      "points of presence",
-    "globe.cta":         "Drag the globe — this is the live network"
+    "globe.cta":         "Drag the globe – this is the live network"
   }
 };
 

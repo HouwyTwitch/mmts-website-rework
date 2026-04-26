@@ -1,4 +1,4 @@
-# Netlify / Cloudflare Pages headers — same hardening as .htaccess.
+# Netlify / Cloudflare Pages headers – same hardening as .htaccess.
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff

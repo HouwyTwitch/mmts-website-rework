@@ -159,6 +159,12 @@
       .pointAltitude(0.005)
       .pointRadius((d) => d.size)
       .pointResolution(12)
+      .pointLabel((d) => {
+        const isRu = lang() === "ru";
+        const name = isRu ? d.ru : d.en;
+        const country = isRu ? d.country_ru : d.country_en;
+        return country ? `${name}\n${country}` : name;
+      })
 
       /* === HTML LABELS for PoPs only (clean text bubbles) === */
       .htmlElementsData(popsView)

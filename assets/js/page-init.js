@@ -40,13 +40,46 @@
         }
         if (search) search.addEventListener("input", filter);
 
+        function normalizeLng(lng) {
+          let out = lng;
+          while (out > 180) out -= 360;
+          while (out < -180) out += 360;
+          return out;
+        }
+
+        function midLng(a, b) {
+          const a1 = normalizeLng(a);
+          const b1 = normalizeLng(b);
+          let d = b1 - a1;
+          if (d > 180) d -= 360;
+          if (d < -180) d += 360;
+          return normalizeLng(a1 + d / 2);
+        }
+
+        function focusCity(lat, lng) {
+          const pov = globe.pointOfView() || {};
+          const curLat = isFinite(pov.lat) ? pov.lat : lat;
+          const curLng = isFinite(pov.lng) ? pov.lng : lng;
+          const curAlt = isFinite(pov.altitude) ? pov.altitude : 1.2;
+          const endAlt = Math.max(0.32, Math.min(curAlt, 2.6));
+          const travelAlt = Math.min(Math.max(endAlt + 0.45, 0.78), 2.9);
+
+          globe.pointOfView(
+            { lat: (curLat + lat) / 2, lng: midLng(curLng, lng), altitude: travelAlt },
+            520
+          );
+          window.setTimeout(() => {
+            globe.pointOfView({ lat, lng, altitude: endAlt }, 900);
+          }, 280);
+        }
+
         list.addEventListener("click", (e) => {
           const item = e.target.closest(".pop-item");
           if (!item) return;
           const lat = parseFloat(item.dataset.lat);
           const lng = parseFloat(item.dataset.lng);
           if (!isFinite(lat) || !isFinite(lng)) return;
-          globe.pointOfView({ lat, lng, altitude: 1.6 }, 1200);
+          focusCity(lat, lng);
         });
 
         document.addEventListener("mmts:globe:select", (e) => {

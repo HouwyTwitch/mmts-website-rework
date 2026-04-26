@@ -57,3 +57,4 @@ Options -Indexes
 
 # Force UTF-8 for Cyrillic-safe rendering
 AddDefaultCharset UTF-8
+AddCharset UTF-8 .html .css .js .json .xml .txt

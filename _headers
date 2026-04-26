@@ -16,4 +16,5 @@
 /assets/data/*
   Cache-Control: public, max-age=2592000, immutable
 /*.html
+  Content-Type: text/html; charset=UTF-8
   Cache-Control: public, max-age=0, must-revalidate

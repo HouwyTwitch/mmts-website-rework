@@ -159,8 +159,8 @@
     ctrl.autoRotateSpeed = opts.autoRotateSpeed || 0.35;
     ctrl.enableZoom = !!opts.enableZoom;
     ctrl.enablePan = false;
-    ctrl.minDistance = 80;
-    ctrl.maxDistance = 700;
+    ctrl.minDistance = 1;
+    ctrl.maxDistance = 2000;
 
     let wasAutoRotate = ctrl.autoRotate;
     ctrl.addEventListener("start", () => {
@@ -279,7 +279,7 @@
       autoRotate: true,
       autoRotateSpeed: 0.18,
       enableZoom: true,
-      altitude: 1.35,
+      altitude: 1.15,
       showGraticules: true,
       showRings: true,
       moverStride: 3,

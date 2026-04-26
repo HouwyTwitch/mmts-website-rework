@@ -101,16 +101,16 @@
       .pointAltitude((d) => (d.kind === "mover" ? 0.012 : 0.005))
       .pointRadius((d) => d.size)
       .pointResolution(12)
-      .labelsData(popsData)
-      .labelLat((d) => d.lat)
-      .labelLng((d) => d.lng)
-      .labelText((d) => d.name)
-      .labelSize(0.55)
-      .labelDotRadius(0.35)
-      .labelColor(() => cssVar("--fg") || "#fff")
-      .labelResolution(2)
-      .labelAltitude(0.012)
-      .labelsTransitionDuration(0)
+      .htmlElementsData(popsData)
+      .htmlLat((d) => d.lat)
+      .htmlLng((d) => d.lng)
+      .htmlAltitude(0.012)
+      .htmlElement((d) => {
+        const el = document.createElement("div");
+        el.className = "globe-html-label";
+        el.textContent = d.name;
+        return el;
+      })
       .ringsData([])
       .ringMaxRadius(2.4)
       .ringPropagationSpeed(1.15)
@@ -183,8 +183,7 @@
       cityData.splice(0, cityData.length, ...newCities);
       popsData.splice(0, popsData.length, ...newPops);
       globe.pointsData(staticPoints());
-      globe.labelsData([]);
-      globe.labelsData(newPops);
+      globe.htmlElementsData(newPops);
       globe.ringsData([]);
     });
 

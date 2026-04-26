@@ -337,6 +337,18 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 .globe-stage canvas { width: 100% !important; height: 100% !important; }
 @media (max-width: 700px) { .globe-stage { min-height: 0; } }
 
+.globe-html-label {
+  color: var(--fg);
+  font-family: "Segoe UI", "Arial", "Noto Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
 /* =========================================================
    Cards
    ========================================================= */

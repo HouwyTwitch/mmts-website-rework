@@ -81,20 +81,37 @@
 
     const movers = [];
     const staticPoints = () => [...cityData, ...popsData];
+    const staticPaths = SEGMENTS.map((s) => ({
+      status: s.status,
+      points: [
+        { lat: s.startLat, lng: s.startLng },
+        { lat: s.endLat, lng: s.endLng }
+      ]
+    }));
 
     const globe = Globe({ rendererConfig: { antialias: true, alpha: true } })(el)
       .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true)
       .showGraticules(opts.showGraticules !== false)
+      .pathsData(staticPaths)
+      .pathPoints((d) => d.points)
+      .pathPointLat((p) => p.lat)
+      .pathPointLng((p) => p.lng)
+      .pathColor((d) => (d.status === "ready" ? cssVar("--globe-arc") || "#2adfc3" : cssVar("--brand-2") || "#29c4ff"))
+      .pathStroke(0.16)
+      .pathDashLength(1)
+      .pathDashGap(0)
+      .pathDashAnimateTime(0)
       .arcsData(SEGMENTS)
       .arcStartLat((d) => d.startLat)
       .arcStartLng((d) => d.startLng)
       .arcEndLat((d) => d.endLat)
       .arcEndLng((d) => d.endLng)
       .arcAltitudeAutoScale(0.24)
-      .arcStroke(0.55)
-      .arcDashLength(0.85)
-      .arcDashGap(0.35)
+      .arcStroke(0.7)
+      .arcDashLength(0.035)
+      .arcDashGap(4.5)
+      .arcDashInitialGap(() => Math.random() * 5)
       .arcDashAnimateTime((d) => (d.status === "ready" ? 4200 : 6200))
       .arcsTransitionDuration(0)
       .pointsData(staticPoints())
@@ -132,7 +149,7 @@
     ctrl.zoomSpeed = 0.5;
     ctrl.autoRotate = opts.autoRotate !== false;
     ctrl.autoRotateSpeed = opts.autoRotateSpeed || 0.35;
-    ctrl.enableZoom = !!opts.enableZoom;
+    ctrl.enableZoom = false;
     ctrl.enablePan = false;
     ctrl.minDistance = 0.001;
     ctrl.maxDistance = 2000;
@@ -217,7 +234,7 @@
     return build(el, {
       autoRotate: true,
       autoRotateSpeed: 0.18,
-      enableZoom: true,
+      enableZoom: false,
       altitude: 1.15,
       showGraticules: true,
       showRings: true

@@ -84,11 +84,11 @@
     radial-gradient(ellipse at 80% 20%, rgba(111, 108, 255, 0.12), transparent 55%),
     linear-gradient(180deg, #f6f8fb 0%, #eaf0f7 100%);
   --noise-opacity: 0.04;
-  --globe-color: #dbe5ef;
-  --globe-atmosphere: #29c4ff;
-  --globe-arc: #1a8aff;
-  --globe-point: #1170d8;
-  --globe-graticule: rgba(10, 16, 28, 0.08);
+  --globe-color: #c9d7e6;
+  --globe-atmosphere: #2ab8ff;
+  --globe-arc: #00b7b0;
+  --globe-point: #0c67cf;
+  --globe-graticule: rgba(10, 16, 28, 0.12);
 }
 
 /* =========================================================
@@ -164,20 +164,12 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
   font-size: 1.15rem;
 }
 .nav__logo {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: conic-gradient(from 200deg, var(--brand), var(--brand-2), var(--brand-3), var(--brand));
-  position: relative; overflow: hidden;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: center / cover no-repeat url("http://mmts.su/wp-content/uploads/2016/11/favicon.png");
   box-shadow: 0 0 0 1px var(--border-strong) inset;
-}
-.nav__logo::after {
-  content: ""; position: absolute; inset: 4px;
-  border-radius: 7px; background: var(--bg-1);
-}
-.nav__logo::before {
-  content: "M"; position: absolute; inset: 0;
-  display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 800; font-size: 1.05rem;
-  color: var(--fg); z-index: 2;
+  flex-shrink: 0;
 }
 .nav__links { display: flex; gap: 0.4rem; align-items: center; }
 .nav__link {

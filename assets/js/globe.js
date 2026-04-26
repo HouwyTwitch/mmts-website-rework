@@ -110,6 +110,7 @@
       .labelColor(() => cssVar("--fg") || "#fff")
       .labelResolution(2)
       .labelAltitude(0.012)
+      .labelsTransitionDuration(0)
       .ringsData([])
       .ringMaxRadius(2.4)
       .ringPropagationSpeed(1.15)
@@ -187,6 +188,7 @@
       cityData.splice(0, cityData.length, ...newCities);
       popsData.splice(0, popsData.length, ...newPops);
       globe.pointsData(staticPoints());
+      globe.labelsData([]);
       globe.labelsData(newPops);
       globe.ringsData([]);
     });

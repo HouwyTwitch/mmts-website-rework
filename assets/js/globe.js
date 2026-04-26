@@ -55,32 +55,6 @@
       .pointColor((d) => (d.kind === "mover" ? arcReady : point));
   }
 
-  function makeMovers(segments, stride) {
-    const out = [];
-    for (let i = 0; i < segments.length; i += stride) {
-      const s = segments[i];
-      out.push({
-        startLat: s.startLat,
-        startLng: s.startLng,
-        endLat: s.endLat,
-        endLng: s.endLng,
-        t: (i % 10) / 10,
-        speed: 0.012 + (i % 5) * 0.0028
-      });
-    }
-    return out;
-  }
-
-  function moverToPoint(m) {
-    return {
-      kind: "mover",
-      lat: m.startLat + (m.endLat - m.startLat) * m.t,
-      lng: m.startLng + (m.endLng - m.startLng) * m.t,
-      size: 0.12,
-      status: "ready"
-    };
-  }
-
   function build(el, opts) {
     opts = opts || {};
     const lang = document.documentElement.lang === "ru" ? "ru" : "en";
@@ -105,7 +79,7 @@
       status: c.status
     }));
 
-    const movers = makeMovers(SEGMENTS, opts.moverStride || 3);
+    const movers = [];
     const staticPoints = () => [...cityData, ...popsData];
 
     const globe = Globe({ rendererConfig: { antialias: true, alpha: true } })(el)
@@ -123,7 +97,7 @@
       .arcDashGap(0)
       .arcDashAnimateTime(0)
       .arcsTransitionDuration(0)
-      .pointsData([...staticPoints(), ...movers.map(moverToPoint)])
+      .pointsData(staticPoints())
       .pointAltitude((d) => (d.kind === "mover" ? 0.012 : 0.005))
       .pointRadius((d) => d.size)
       .pointResolution(12)
@@ -136,7 +110,7 @@
       .labelColor(() => cssVar("--fg") || "#fff")
       .labelResolution(2)
       .labelAltitude(0.012)
-      .ringsData(opts.showRings === false ? [] : popsData)
+      .ringsData([])
       .ringMaxRadius(2.4)
       .ringPropagationSpeed(1.15)
       .ringRepeatPeriod(2400)
@@ -182,36 +156,7 @@
     });
     ro.observe(el);
 
-    const intervalMs = opts.moverIntervalMs || 90;
-    let timer = null;
-
-    const updateMovers = () => {
-      for (let i = 0; i < movers.length; i++) {
-        movers[i].t += movers[i].speed;
-        if (movers[i].t >= 1) movers[i].t -= 1;
-      }
-      globe.pointsData([...staticPoints(), ...movers.map(moverToPoint)]);
-    };
-
-    const startMoverLoop = () => {
-      if (timer || document.hidden) return;
-      timer = window.setInterval(updateMovers, intervalMs);
-    };
-
-    const stopMoverLoop = () => {
-      if (!timer) return;
-      window.clearInterval(timer);
-      timer = null;
-    };
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) stopMoverLoop();
-      else startMoverLoop();
-    });
-    startMoverLoop();
-
     globe.onPointClick((d) => {
-      if (d.kind === "mover") return;
       el.dispatchEvent(new CustomEvent("mmts:globe:select", { detail: d, bubbles: true }));
     });
     globe.onLabelClick((d) => {
@@ -241,15 +186,14 @@
       }));
       cityData.splice(0, cityData.length, ...newCities);
       popsData.splice(0, popsData.length, ...newPops);
-      globe.pointsData([...staticPoints(), ...movers.map(moverToPoint)]);
+      globe.pointsData(staticPoints());
       globe.labelsData(newPops);
-      globe.ringsData(opts.showRings === false ? [] : newPops);
+      globe.ringsData([]);
     });
 
     el.addEventListener(
       "mmts:globe:destroy",
       () => {
-        stopMoverLoop();
         ro.disconnect();
       },
       { once: true }
@@ -267,9 +211,7 @@
       enableZoom: false,
       altitude: 1.72,
       showGraticules: true,
-      showRings: false,
-      moverStride: 5,
-      moverIntervalMs: 120
+      showRings: false
     });
   }
 
@@ -282,9 +224,7 @@
       enableZoom: true,
       altitude: 1.15,
       showGraticules: true,
-      showRings: true,
-      moverStride: 3,
-      moverIntervalMs: 90
+      showRings: true
     });
   }
 

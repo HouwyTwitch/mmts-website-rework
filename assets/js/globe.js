@@ -1,7 +1,5 @@
 /* =========================================================
-   MMTS — 3D Globe (theme-aware, with moving packets)
-   Uses globe.gl (UMD) — already loaded from CDN by the page.
-   Renders MMTS POPs + transit cities + static arcs + moving points.
+   MMTS — 3D Globe (theme-aware, optimized animation)
    ========================================================= */
 
 (function () {
@@ -54,34 +52,31 @@
       .atmosphereColor(atmos)
       .atmosphereAltitude(0.17)
       .arcColor((d) => (d.status === "ready" ? arcReady : arcSoon))
-      .pointColor((d) => (d.kind === "mover" ? arcReady : point))
-      .ringColor(() => (t) => `rgba(${hex2rgb(arcReady)}, ${1 - t})`);
+      .pointColor((d) => (d.kind === "mover" ? arcReady : point));
   }
 
-  function hex2rgb(hex) {
-    const h = hex.replace("#", "").trim();
-    const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
-    return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
-  }
-
-  function makeMovers(segments) {
-    return segments.map((s, i) => ({
-      startLat: s.startLat,
-      startLng: s.startLng,
-      endLat: s.endLat,
-      endLng: s.endLng,
-      t: (i % 10) / 10,
-      speed: 0.002 + (i % 7) * 0.00035
-    }));
+  function makeMovers(segments, stride) {
+    const out = [];
+    for (let i = 0; i < segments.length; i += stride) {
+      const s = segments[i];
+      out.push({
+        startLat: s.startLat,
+        startLng: s.startLng,
+        endLat: s.endLat,
+        endLng: s.endLng,
+        t: (i % 10) / 10,
+        speed: 0.012 + (i % 5) * 0.0028
+      });
+    }
+    return out;
   }
 
   function moverToPoint(m) {
     return {
       kind: "mover",
-      name: "packet",
       lat: m.startLat + (m.endLat - m.startLat) * m.t,
       lng: m.startLng + (m.endLng - m.startLng) * m.t,
-      size: 0.14,
+      size: 0.12,
       status: "ready"
     };
   }
@@ -95,68 +90,71 @@
       name: lang === "ru" ? p.name_ru : p.name_en,
       country: lang === "ru" ? p.country_ru : p.country_en,
       site: p.site,
-      lat: p.lat, lng: p.lng,
-      size: 0.65, status: "colo"
+      lat: p.lat,
+      lng: p.lng,
+      size: 0.65,
+      status: "colo"
     }));
 
     const cityData = CITIES.map((c) => ({
       kind: "city",
       name: lang === "ru" ? c.name_ru : c.name_en,
-      lat: c.lat, lng: c.lng,
-      size: 0.18, status: c.status
+      lat: c.lat,
+      lng: c.lng,
+      size: 0.18,
+      status: c.status
     }));
 
-    const labelData = popsData;
-    const movers = makeMovers(SEGMENTS);
+    const movers = makeMovers(SEGMENTS, opts.moverStride || 3);
+    const staticPoints = () => [...cityData, ...popsData];
 
     const globe = Globe({ rendererConfig: { antialias: true, alpha: true } })(el)
       .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true)
       .showGraticules(opts.showGraticules !== false)
-
       .arcsData(SEGMENTS)
-      .arcStartLat((d) => d.startLat).arcStartLng((d) => d.startLng)
-      .arcEndLat((d) => d.endLat).arcEndLng((d) => d.endLng)
+      .arcStartLat((d) => d.startLat)
+      .arcStartLng((d) => d.startLng)
+      .arcEndLat((d) => d.endLat)
+      .arcEndLng((d) => d.endLng)
       .arcAltitudeAutoScale(0.24)
       .arcStroke(0.55)
       .arcDashLength(1)
       .arcDashGap(0)
       .arcDashAnimateTime(0)
       .arcsTransitionDuration(0)
-
-      .pointsData([...cityData, ...popsData, ...movers.map(moverToPoint)])
-      .pointAltitude((d) => (d.kind === "mover" ? 0.013 : 0.005))
+      .pointsData([...staticPoints(), ...movers.map(moverToPoint)])
+      .pointAltitude((d) => (d.kind === "mover" ? 0.012 : 0.005))
       .pointRadius((d) => d.size)
-      .pointResolution(10)
-
-      .labelsData(labelData)
-      .labelLat((d) => d.lat).labelLng((d) => d.lng)
+      .pointResolution(6)
+      .labelsData(popsData)
+      .labelLat((d) => d.lat)
+      .labelLng((d) => d.lng)
       .labelText((d) => d.name)
       .labelSize(0.55)
       .labelDotRadius(0.35)
       .labelColor(() => cssVar("--fg") || "#fff")
       .labelResolution(2)
       .labelAltitude(0.012)
-
-      .ringsData(popsData)
-      .ringMaxRadius(2.5)
-      .ringPropagationSpeed(1.2)
-      .ringRepeatPeriod(2200)
+      .ringsData(opts.showRings === false ? [] : popsData)
+      .ringMaxRadius(2.4)
+      .ringPropagationSpeed(1.15)
+      .ringRepeatPeriod(2400)
       .ringAltitude(0.005);
 
     paint(globe);
 
     const ctrl = globe.controls();
     ctrl.enableDamping = true;
-    ctrl.dampingFactor = 0.075;
-    ctrl.rotateSpeed = 0.45;
-    ctrl.zoomSpeed = 0.55;
+    ctrl.dampingFactor = 0.08;
+    ctrl.rotateSpeed = 0.42;
+    ctrl.zoomSpeed = 0.5;
     ctrl.autoRotate = opts.autoRotate !== false;
-    ctrl.autoRotateSpeed = opts.autoRotateSpeed || 0.42;
+    ctrl.autoRotateSpeed = opts.autoRotateSpeed || 0.35;
     ctrl.enableZoom = !!opts.enableZoom;
     ctrl.enablePan = false;
     ctrl.minDistance = 240;
-    ctrl.maxDistance = 540;
+    ctrl.maxDistance = 520;
 
     let wasAutoRotate = ctrl.autoRotate;
     ctrl.addEventListener("start", () => {
@@ -177,17 +175,33 @@
     });
     ro.observe(el);
 
-    let alive = true;
-    const tick = () => {
-      if (!alive) return;
+    const intervalMs = opts.moverIntervalMs || 90;
+    let timer = null;
+
+    const updateMovers = () => {
       for (let i = 0; i < movers.length; i++) {
         movers[i].t += movers[i].speed;
-        if (movers[i].t >= 1) movers[i].t = 0;
+        if (movers[i].t >= 1) movers[i].t -= 1;
       }
-      globe.pointsData([...cityData, ...popsData, ...movers.map(moverToPoint)]);
-      requestAnimationFrame(tick);
+      globe.pointsData([...staticPoints(), ...movers.map(moverToPoint)]);
     };
-    requestAnimationFrame(tick);
+
+    const startMoverLoop = () => {
+      if (timer || document.hidden) return;
+      timer = window.setInterval(updateMovers, intervalMs);
+    };
+
+    const stopMoverLoop = () => {
+      if (!timer) return;
+      window.clearInterval(timer);
+      timer = null;
+    };
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopMoverLoop();
+      else startMoverLoop();
+    });
+    startMoverLoop();
 
     globe.onPointClick((d) => {
       if (d.kind === "mover") return;
@@ -204,24 +218,35 @@
         kind: "pop",
         name: lang2 === "ru" ? p.name_ru : p.name_en,
         country: lang2 === "ru" ? p.country_ru : p.country_en,
-        site: p.site, lat: p.lat, lng: p.lng, size: 0.65, status: "colo"
+        site: p.site,
+        lat: p.lat,
+        lng: p.lng,
+        size: 0.65,
+        status: "colo"
       }));
       const newCities = CITIES.map((c) => ({
         kind: "city",
         name: lang2 === "ru" ? c.name_ru : c.name_en,
-        lat: c.lat, lng: c.lng, size: 0.18, status: c.status
+        lat: c.lat,
+        lng: c.lng,
+        size: 0.18,
+        status: c.status
       }));
       cityData.splice(0, cityData.length, ...newCities);
       popsData.splice(0, popsData.length, ...newPops);
-      globe.pointsData([...newCities, ...newPops, ...movers.map(moverToPoint)]);
+      globe.pointsData([...staticPoints(), ...movers.map(moverToPoint)]);
       globe.labelsData(newPops);
-      globe.ringsData(newPops);
+      globe.ringsData(opts.showRings === false ? [] : newPops);
     });
 
-    el.addEventListener("mmts:globe:destroy", () => {
-      alive = false;
-      ro.disconnect();
-    }, { once: true });
+    el.addEventListener(
+      "mmts:globe:destroy",
+      () => {
+        stopMoverLoop();
+        ro.disconnect();
+      },
+      { once: true }
+    );
 
     return globe;
   }
@@ -231,10 +256,13 @@
     if (!el) return null;
     return build(el, {
       autoRotate: true,
-      autoRotateSpeed: 0.34,
+      autoRotateSpeed: 0.3,
       enableZoom: false,
-      altitude: 2.08,
-      showGraticules: true
+      altitude: 2.05,
+      showGraticules: true,
+      showRings: false,
+      moverStride: 5,
+      moverIntervalMs: 120
     });
   }
 
@@ -243,10 +271,13 @@
     if (!el) return null;
     return build(el, {
       autoRotate: true,
-      autoRotateSpeed: 0.2,
+      autoRotateSpeed: 0.18,
       enableZoom: true,
-      altitude: 2.3,
-      showGraticules: true
+      altitude: 2.28,
+      showGraticules: true,
+      showRings: true,
+      moverStride: 3,
+      moverIntervalMs: 90
     });
   }
 

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="color-scheme" content="dark light" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 base-uri 'self';
+                 object-src 'none';
+                 frame-ancestors 'none';
+                 form-action 'self' mailto:;
+                 img-src 'self' data: blob:;
+                 font-src 'self' data:;
+                 style-src 'self';
+                 script-src 'self';
+                 connect-src 'self';
+                 worker-src 'self' blob:;
+                 upgrade-insecure-requests" />
+
+  <title data-i18n="meta.title.services">Услуги операторам — MMTS</title>
+  <meta name="description" content="MMTS services for carriers and business: IP transit, Ethernet & VPN, capacity, fiber, colocation." />
+
+  <link rel="icon" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' x2='1' y1='0' y2='1'&gt;&lt;stop offset='0%25' stop-color='%232adfc3'/&gt;&lt;stop offset='100%25' stop-color='%2329c4ff'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='32' height='32' rx='8' fill='url(%23g)'/&gt;&lt;text x='16' y='22' font-family='Arial' font-size='18' font-weight='800' text-anchor='middle' fill='%23061218'&gt;M&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .svc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: stretch; }
+    @media (max-width: 820px) { .svc-row { grid-template-columns: 1fr; } }
+    .svc-row .card { padding: 2rem; }
+    .svc-row .card h3 { font-size: 1.5rem; }
+    .pill-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+  </style>
+  <script src="assets/js/theme.js"></script>
+</head>
+<body>
+
+<header class="nav" role="banner">
+  <a href="index.html" class="nav__brand"><span class="nav__logo" aria-hidden="true"></span><span>MMTS</span></a>
+  <nav class="nav__links" aria-label="Primary">
+    <a class="nav__link" href="index.html"     data-i18n="nav.home">Главная</a>
+    <a class="nav__link" href="network.html"   data-i18n="nav.network">Сеть</a>
+    <a class="nav__link" href="services.html"  data-i18n="nav.services">Услуги</a>
+    <a class="nav__link" href="software.html"  data-i18n="nav.software">Software</a>
+    <a class="nav__link" href="contacts.html"  data-i18n="nav.contacts">Контакты</a>
+  </nav>
+  <div class="nav__tools">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang="ru">RU</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+    <button type="button" class="icon-btn" data-theme-toggle aria-label="Toggle theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <button type="button" class="nav__burger" aria-expanded="false" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section" style="padding-top:8rem">
+    <div class="container">
+      <header class="section__head reveal">
+        <span class="section__eyebrow" data-i18n="services.eyebrow">Услуги</span>
+        <h1 class="section__title" data-i18n="spage.title">Услуги операторам и бизнесу</h1>
+        <p class="section__sub" data-i18n="spage.sub">Линейка магистральных сервисов MMTS. Подключение в любой нашей точке присутствия — за дни, не недели.</p>
+      </header>
+
+      <div class="svc-row">
+        <article class="card reveal" id="iptransit">
+          <div class="card__icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3 data-i18n="svc.iptransit.title">IP-транзит</h3>
+          <p class="muted" data-i18n="svc.iptransit.text">BGP IPv4/IPv6, премиум-аплинки, защита от DDoS, NOC 24×7.</p>
+          <div class="pill-list">
+            <span class="tag">BGP</span><span class="tag">IPv4 / IPv6</span><span class="tag">DDoS-mitigation</span><span class="tag">RIPE LIR</span>
+          </div>
+        </article>
+
+        <article class="card reveal" id="ethernet" data-delay="1">
+          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01"/></svg></div>
+          <h3 data-i18n="svc.ethernet.title">Ethernet & VPN</h3>
+          <p class="muted" data-i18n="svc.ethernet.text">L2/L3 каналы между офисами и ЦОД, MPLS, гарантированная полоса.</p>
+          <div class="pill-list">
+            <span class="tag">L2VPN</span><span class="tag">MPLS L3VPN</span><span class="tag">VPLS / EVPN</span><span class="tag">SLA 99.99%</span>
+          </div>
+        </article>
+
+        <article class="card reveal" id="capacity" data-delay="2">
+          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <h3 data-i18n="svc.capacity.title">Магистральные ёмкости</h3>
+          <p class="muted" data-i18n="svc.capacity.text">Lambda и dark fiber на собственной DWDM. От 10G до 400G.</p>
+          <div class="pill-list">
+            <span class="tag">DWDM</span><span class="tag">10G / 100G / 400G</span><span class="tag">Dark fiber</span>
+          </div>
+        </article>
+
+        <article class="card reveal" id="fiber" data-delay="3">
+          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12c5-9 13-9 18 0"/><path d="M3 12c5 9 13 9 18 0"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <h3 data-i18n="svc.fiber.title">Строительство ВОЛС</h3>
+          <p class="muted" data-i18n="svc.fiber.text">Проектирование, прокладка, муфтование. «Под ключ» с измерениями.</p>
+          <div class="pill-list">
+            <span class="tag">G.652 / G.655</span><span class="tag">OTDR</span><span class="tag">Турн-кей</span>
+          </div>
+        </article>
+
+        <article class="card reveal" id="colocation" data-delay="1">
+          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="6" rx="1"/><rect x="3" y="15" width="18" height="6" rx="1"/></svg></div>
+          <h3 data-i18n="svc.colocation.title">Размещение</h3>
+          <p class="muted" data-i18n="svc.colocation.text">Юниты, стойки, кросс-коннекты в наших узлах. Резерв по питанию.</p>
+          <div class="pill-list">
+            <span class="tag">1U–½ rack–full rack</span><span class="tag">Cross-connect</span><span class="tag">N+1 power</span>
+          </div>
+        </article>
+
+        <article class="card reveal" id="lookingglass" data-delay="2">
+          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <h3 data-i18n="svc.lookingglass.title">Looking Glass</h3>
+          <p class="muted" data-i18n="svc.lookingglass.text">Прозрачная диагностика — ping, traceroute, BGP-сводка из нашей сети.</p>
+          <div class="pill-list">
+            <span class="tag">ping</span><span class="tag">traceroute</span><span class="tag">show ip bgp</span>
+          </div>
+        </article>
+      </div>
+
+      <div style="margin-top:3rem; text-align:center" class="reveal">
+        <a class="btn btn--primary" href="contacts.html">
+          <span data-i18n="spage.cta">Запросить расчёт</span>
+          <svg class="btn__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <div class="nav__brand" style="margin-bottom:1rem"><span class="nav__logo" aria-hidden="true"></span><span>MMTS</span></div>
+        <p data-i18n="ftr.aboutText" class="muted" style="max-width:32ch">MMTS LLC — независимый магистральный оператор.</p>
+      </div>
+      <div><h4 data-i18n="ftr.services">Услуги</h4><ul>
+        <li><a href="services.html#iptransit"  data-i18n="svc.iptransit.title">IP-транзит</a></li>
+        <li><a href="services.html#ethernet"   data-i18n="svc.ethernet.title">Ethernet & VPN</a></li>
+        <li><a href="services.html#capacity"   data-i18n="svc.capacity.title">Магистральные ёмкости</a></li>
+        <li><a href="services.html#fiber"      data-i18n="svc.fiber.title">Строительство ВОЛС</a></li>
+        <li><a href="services.html#colocation" data-i18n="svc.colocation.title">Размещение</a></li>
+      </ul></div>
+      <div><h4 data-i18n="ftr.company">Компания</h4><ul>
+        <li><a href="network.html"  data-i18n="nav.network">Сеть</a></li>
+        <li><a href="software.html" data-i18n="nav.software">Software</a></li>
+        <li><a href="contacts.html" data-i18n="nav.contacts">Контакты</a></li>
+      </ul></div>
+      <div><h4 data-i18n="ftr.connect">Контакты</h4><ul>
+        <li><a href="mailto:noc@mmts.su">noc@mmts.su</a></li>
+        <li><a href="tel:+78452794300">+7 (8452) 79-43-00</a></li>
+        <li class="muted" data-i18n="ctc.officeAddr">г. Саратов, 410012, ул. Большая Казачья, 6</li>
+      </ul></div>
+    </div>
+    <div class="footer__bottom"><span data-i18n="ftr.copy">© 2008–2026 ООО «МТТС». Все права защищены.</span><span class="muted">v2.0 · <span data-year>2026</span></span></div>
+  </div>
+</footer>
+
+<script defer src="assets/js/i18n.js"></script>
+<script defer src="assets/js/main.js"></script>
+</body>
+</html>

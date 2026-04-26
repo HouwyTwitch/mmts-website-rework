@@ -1,0 +1,55 @@
+# =========================================================
+# MMTS — Apache hardening
+# Defence in depth: TLS upgrade, strict headers, no MIME sniffing,
+# no framing, strong CSP. Deny dotfiles & version control.
+# =========================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Force HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # HSTS — force HTTPS for 2 years, include subdomains, preload
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+
+  # Disable MIME sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # No framing — clickjacking protection
+  Header always set X-Frame-Options "DENY"
+
+  # Modern Permissions Policy — disable everything we don't use
+  Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()"
+
+  # Cross-Origin isolation
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Resource-Policy "same-origin"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Content-Security-Policy (also set via <meta>; this is the authoritative copy)
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' mailto:; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self'; script-src 'self' https://cdn.jsdelivr.net; connect-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests"
+</IfModule>
+
+# Block hidden files & VCS dirs
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.env
+
+# Disable directory listing
+Options -Indexes
+
+# Aggressive cache for hashed assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css                  "access plus 30 days"
+  ExpiresByType application/javascript    "access plus 30 days"
+  ExpiresByType image/svg+xml             "access plus 30 days"
+  ExpiresByType image/png                 "access plus 30 days"
+  ExpiresByType text/html                 "access plus 0 seconds"
+</IfModule>

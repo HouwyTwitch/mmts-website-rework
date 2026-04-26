@@ -1,5 +1,5 @@
 /* =========================================================
-   MMTS — Design System
+   MMTS – Design System
    Tokens, themes, layout, components, transitions, animations
    ========================================================= */
 
@@ -338,7 +338,7 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
   .hero__metrics { grid-template-columns: repeat(2, 1fr); margin-top: 2.5rem; }
 }
 
-/* Hero globe — decorative; non-interactive so it never blocks scroll on mobile */
+/* Hero globe – decorative; non-interactive so it never blocks scroll on mobile */
 .hero__globe {
   position: absolute;
   left: 50%;
@@ -368,7 +368,7 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 }
 [data-theme="light"] .hero__lead   { text-shadow: 0 1px 0 rgba(255,255,255,0.55); }
 [data-theme="light"] .hero__eyebrow{ background: rgba(255,255,255,0.85); }
-/* Standalone (non-hero) globe used on /network — no mask, full visible disc */
+/* Standalone (non-hero) globe used on /network – no mask, full visible disc */
 .globe-stage {
   position: relative;
   width: 100%;
@@ -386,7 +386,7 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 @media (max-width: 700px) { .globe-stage { min-height: 0; } }
 
 .globe-html-label {
-  /* Always light text on a dark pill — readable over both dark and light Earth textures */
+  /* Always light text on a dark pill – readable over both dark and light Earth textures */
   color: #ffffff;
   font-family: var(--font-sans);
   font-size: 11.5px;
@@ -527,7 +527,7 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 }
 
 /* =========================================================
-   Custom scrollbars — branded, theme-aware, applied everywhere
+   Custom scrollbars – branded, theme-aware, applied everywhere
    (page + any element with overflow: auto/scroll).
    Firefox uses scrollbar-width / scrollbar-color, WebKit/Blink/Safari
    use the ::-webkit-scrollbar shadow tree.
@@ -581,7 +581,7 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 /* The page itself: keep the bar always visible (no fade) for ergonomics */
 html { scrollbar-gutter: stable; }
 
-/* Inputs / textareas — keep slim, no bulky thumb */
+/* Inputs / textareas – keep slim, no bulky thumb */
 .form__textarea::-webkit-scrollbar,
 .form__input::-webkit-scrollbar { width: 8px; height: 8px; }
 

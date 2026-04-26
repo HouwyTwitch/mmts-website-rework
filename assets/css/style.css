@@ -166,9 +166,8 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 .nav__logo {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  background: center / cover no-repeat url("../img/brand/mmts-icon.svg");
-  box-shadow: 0 0 0 1px var(--border-strong) inset;
+  border-radius: 0;
+  background: center / contain no-repeat url("../img/brand/mmts-icon.svg");
   flex-shrink: 0;
 }
 .nav__links { display: flex; gap: 0.4rem; align-items: center; }
@@ -186,8 +185,25 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
   background: transparent; color: var(--fg);
   border: 1px solid var(--border);
   transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+  position: relative;
+  overflow: hidden;
 }
 .icon-btn:hover { background: var(--bg-3); border-color: var(--border-strong); transform: translateY(-1px); }
+
+/* Sun / Moon swap on theme button.
+   In dark theme show sun (action: switch to light), in light theme show moon. */
+.icon-btn[data-theme-toggle] .icon-sun,
+.icon-btn[data-theme-toggle] .icon-moon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px; height: 18px;
+  transition: transform var(--t-med) var(--ease-out), opacity var(--t-med) var(--ease-out);
+}
+[data-theme="dark"]  .icon-btn[data-theme-toggle] .icon-sun  { opacity: 1; transform: rotate(0deg)   scale(1); }
+[data-theme="dark"]  .icon-btn[data-theme-toggle] .icon-moon { opacity: 0; transform: rotate(-90deg) scale(.5); }
+[data-theme="light"] .icon-btn[data-theme-toggle] .icon-sun  { opacity: 0; transform: rotate(90deg)  scale(.5); }
+[data-theme="light"] .icon-btn[data-theme-toggle] .icon-moon { opacity: 1; transform: rotate(0deg)   scale(1); }
 
 .lang-toggle {
   display: inline-flex; align-items: center;
@@ -292,15 +308,34 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 .hero__lead { font-size: clamp(1.05rem, 1.6vw, 1.25rem); color: var(--fg-muted); max-width: 620px; }
 .hero__cta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 2rem; }
 .hero__metrics {
-  margin-top: 4rem;
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem;
-  max-width: 760px;
+  margin-top: 3.5rem;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem;
+  max-width: 820px;
+  position: relative; z-index: 3;
 }
-.hero__metric { padding: 1rem 0; border-top: 1px solid var(--border); }
-.hero__metric-value { font-family: var(--font-display); font-size: clamp(1.6rem, 2.4vw, 2.1rem); font-weight: 700; letter-spacing: -0.02em; }
-.hero__metric-label { font-size: 0.85rem; color: var(--fg-muted); }
+.hero__metric {
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-strong);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 8px 30px -12px rgba(0,0,0,0.3);
+  transition: transform var(--t-fast) var(--ease-out), border-color var(--t-fast);
+}
+.hero__metric:hover { transform: translateY(-2px); border-color: var(--brand); }
+.hero__metric-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.2vw, 1.95rem);
+  font-weight: 700; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  line-height: 1.1;
+}
+.hero__metric-label { font-size: 0.78rem; color: var(--fg); opacity: .85; margin-top: 2px; font-weight: 500; }
 @media (max-width: 720px) {
-  .hero__metrics { grid-template-columns: repeat(2, 1fr); }
+  .hero__metrics { grid-template-columns: repeat(2, 1fr); margin-top: 2.5rem; }
 }
 
 /* Hero globe — decorative; non-interactive so it never blocks scroll on mobile */
@@ -320,6 +355,19 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 @media (max-width: 720px) {
   .hero__globe { bottom: -52vw; width: 180vw; height: 180vw; }
 }
+/* On light theme: keep the same mask shape as dark (so the globe is visible),
+   add a soft top-of-globe vignette so the daytime Earth texture doesn't fight
+   with hero text directly above it. */
+[data-theme="light"] .hero::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 30%; pointer-events: none; z-index: 1;
+  background: linear-gradient(to top,
+    rgba(246, 248, 251, 0.40) 0%,
+    rgba(246, 248, 251, 0)   100%);
+}
+[data-theme="light"] .hero__lead   { text-shadow: 0 1px 0 rgba(255,255,255,0.55); }
+[data-theme="light"] .hero__eyebrow{ background: rgba(255,255,255,0.85); }
 /* Standalone (non-hero) globe used on /network — no mask, full visible disc */
 .globe-stage {
   position: relative;
@@ -338,16 +386,25 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
 @media (max-width: 700px) { .globe-stage { min-height: 0; } }
 
 .globe-html-label {
-  color: var(--fg);
-  font-family: "Segoe UI", "Arial", "Noto Sans", sans-serif;
-  font-size: 12px;
+  /* Always light text on a dark pill — readable over both dark and light Earth textures */
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.02em;
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(7, 12, 18, 0.78);
+  border: 1px solid rgba(42, 223, 195, 0.32);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  transform: translate(-50%, -50%);
+  transition: transform var(--t-fast) var(--ease-out), background var(--t-fast);
 }
+.globe-html-label:hover { background: rgba(42, 223, 195, 0.18); }
 
 /* =========================================================
    Cards
@@ -468,6 +525,65 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
   font-size: 0.85rem;
 }
+
+/* =========================================================
+   Custom scrollbars — branded, theme-aware, applied everywhere
+   (page + any element with overflow: auto/scroll).
+   Firefox uses scrollbar-width / scrollbar-color, WebKit/Blink/Safari
+   use the ::-webkit-scrollbar shadow tree.
+   ========================================================= */
+
+/* Firefox + modern Chromium */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand) transparent;
+}
+
+/* WebKit / Blink / Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--brand) 0%, var(--brand-2) 100%);
+  border-radius: 999px;
+  /* Carve a transparent gutter around the thumb so it looks slim & inset */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transition: background var(--t-fast);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--brand-2) 0%, var(--brand-3) 100%);
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, var(--brand-3) 0%, var(--brand) 100%);
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-corner { background: transparent; }
+
+/* Light theme: track gets a faint surface tint so the thumb reads */
+[data-theme="light"] *::-webkit-scrollbar-track {
+  background: rgba(10, 16, 28, 0.04);
+}
+
+/* Dark theme: subtle track */
+[data-theme="dark"] *::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* The page itself: keep the bar always visible (no fade) for ergonomics */
+html { scrollbar-gutter: stable; }
+
+/* Inputs / textareas — keep slim, no bulky thumb */
+.form__textarea::-webkit-scrollbar,
+.form__input::-webkit-scrollbar { width: 8px; height: 8px; }
 
 /* =========================================================
    Page transition (View Transitions API + JS fallback)

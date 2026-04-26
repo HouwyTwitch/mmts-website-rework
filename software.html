@@ -12,9 +12,9 @@
                  object-src 'none';
                  frame-ancestors 'none';
                  form-action 'self' mailto:;
-                 img-src 'self' data: blob:;
+                 img-src 'self' data: blob: https://unpkg.com https://mmts.su http://mmts.su;
                  font-src 'self' data:;
-                 style-src 'self';
+                 style-src 'self' 'unsafe-inline';
                  script-src 'self';
                  connect-src 'self';
                  worker-src 'self' blob:;
@@ -23,8 +23,11 @@
   <title data-i18n="meta.title.software">Software — MMTS</title>
   <meta name="description" content="MMTS engineers' own software for DWDM control, latency monitoring and traffic optimisation." />
 
-  <link rel="icon" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' x2='1' y1='0' y2='1'&gt;&lt;stop offset='0%25' stop-color='%232adfc3'/&gt;&lt;stop offset='100%25' stop-color='%2329c4ff'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='32' height='32' rx='8' fill='url(%23g)'/&gt;&lt;text x='16' y='22' font-family='Arial' font-size='18' font-weight='800' text-anchor='middle' fill='%23061218'&gt;M&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="icon" href="assets/img/brand/mmts-icon.svg" />
   <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .pill-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+  </style>
   <script src="assets/js/theme.js"></script>
 </head>
 <body>
@@ -61,23 +64,19 @@
         <p class="section__sub" data-i18n="soft.sub">Команда MMTS пишет ПО для управления DWDM, мониторинга задержек и оптимизации трафика. Часть — продаём наружу.</p>
       </header>
 
-      <div class="row row--3">
-        <article class="card reveal">
-          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
-          <h3 data-i18n="soft.dwdm.title">DWDM Control Plane</h3>
-          <p class="muted" data-i18n="soft.dwdm.text">Конфигурирование транспондеров, авторасчёт OSNR, телеметрия и алармы.</p>
-        </article>
-        <article class="card reveal" data-delay="1">
-          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <h3 data-i18n="soft.lat.title">Low-latency Probe</h3>
-          <p class="muted" data-i18n="soft.lat.text">Измерение и визуализация задержек на ребре сети. Алёрты, графики, экспорт.</p>
-        </article>
-        <article class="card reveal" data-delay="2">
-          <div class="card__icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
-          <h3 data-i18n="soft.api.title">Network API</h3>
-          <p class="muted" data-i18n="soft.api.text">REST/GraphQL для биллинга, заказов, статусов сервисов.</p>
-        </article>
-      </div>
+      <article class="card reveal">
+        <h3 data-i18n="soft.docs.title">Документы и загрузки</h3>
+        <p class="muted" data-i18n="soft.body" style="max-width:70ch">
+          Вопросы по работе программного обеспечения можно направлять на noc@mmts.su.
+        </p>
+        <div class="pill-list">
+          <a class="tag" href="#" data-i18n="soft.doc.1">Инструкция по программированию</a>
+          <a class="tag" href="#" data-i18n="soft.doc.2">Описание функциональных характеристик</a>
+          <a class="tag" href="#" data-i18n="soft.doc.3">Руководство оператора</a>
+          <a class="tag" href="#" data-i18n="soft.doc.4">Сведения о стоимости ПО и лицензии</a>
+          <a class="tag" href="#" data-i18n="soft.doc.5">Экземпляр ПО</a>
+        </div>
+      </article>
     </div>
   </section>
 </main>

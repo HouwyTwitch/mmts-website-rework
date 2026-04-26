@@ -18,9 +18,9 @@
                  object-src 'none';
                  frame-ancestors 'none';
                  form-action 'self' mailto:;
-                 img-src 'self' data: blob:;
+                 img-src 'self' data: blob: https://unpkg.com https://mmts.su http://mmts.su;
                  font-src 'self' data:;
-                 style-src 'self';
+                 style-src 'self' 'unsafe-inline';
                  script-src 'self' https://cdn.jsdelivr.net;
                  connect-src 'self';
                  worker-src 'self' blob:;
@@ -30,7 +30,7 @@
   <meta name="description" data-i18n="meta.desc.home"
         content="Магистральный оператор связи: IP-транзит, Ethernet & VPN, ёмкости, строительство ВОЛС, размещение оборудования." />
 
-  <link rel="icon" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' x2='1' y1='0' y2='1'&gt;&lt;stop offset='0%25' stop-color='%232adfc3'/&gt;&lt;stop offset='100%25' stop-color='%2329c4ff'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='32' height='32' rx='8' fill='url(%23g)'/&gt;&lt;text x='16' y='22' font-family='Arial' font-size='18' font-weight='800' text-anchor='middle' fill='%23061218'&gt;M&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="icon" href="assets/img/brand/mmts-icon.svg" />
 
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="assets/css/style.css" />
@@ -79,12 +79,12 @@
       <span class="hero__eyebrow"><span class="dot"></span><span data-i18n="hero.eyebrow">Магистральный оператор • с 2008</span></span>
       <h1 class="hero__title">
         <span data-i18n="hero.title.1">Соединяем</span>
-        <span class="grad" data-i18n="hero.title.2">континенты</span><br/>
-        <span data-i18n="hero.title.3">оптикой и протоколами</span>
+        <span class="grad" data-i18n="hero.title.2">страны</span><br/>
+        <span data-i18n="hero.title.3">магистральной сетью</span>
       </h1>
       <p class="hero__lead" data-i18n="hero.lead">
-        MMTS строит и эксплуатирует собственную опорную сеть от Франкфурта до Алматы.
-        IP-транзит, Ethernet/VPN, ёмкости, ВОЛС и колокация — с задержками, которые видно.
+        MMTS — частная компания, провайдер магистральной связи и программного обеспечения.
+        Головной офис: Саратов, Россия.
       </p>
       <div class="hero__cta">
         <a class="btn btn--primary" href="services.html">

@@ -138,13 +138,8 @@
     ctrl.maxDistance = 2000;
     ctrl.zoomToCursor = true;
 
-    let wasAutoRotate = ctrl.autoRotate;
     ctrl.addEventListener("start", () => {
-      wasAutoRotate = ctrl.autoRotate;
       ctrl.autoRotate = false;
-    });
-    ctrl.addEventListener("end", () => {
-      ctrl.autoRotate = wasAutoRotate;
     });
 
     globe.pointOfView({ lat: 50, lng: 50, altitude: opts.altitude || 2.2 }, 0);

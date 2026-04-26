@@ -167,7 +167,7 @@ hr { border: 0; height: 1px; background: var(--border); margin: 4rem 0; }
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: center / cover no-repeat url("https://mmts.su/wp-content/uploads/2016/11/favicon.png");
+  background: center / cover no-repeat url("http://mmts.su/wp-content/uploads/2016/11/favicon.png");
   box-shadow: 0 0 0 1px var(--border-strong) inset;
   flex-shrink: 0;
 }

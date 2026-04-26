@@ -49,6 +49,12 @@ const CITIES = [
   { name_en: "Ishim",           name_ru: "Ишим",            lat: 56.1146308,  lng: 69.4771245, status: "ready" },
   { name_en: "Omsk",            name_ru: "Омск",            lat: 54.9884804,  lng: 73.3242362, status: "ready" },
   { name_en: "Novosibirsk",     name_ru: "Новосибирск",     lat: 55.0083526,  lng: 82.9357327, status: "ready" },
+  { name_en: "Penza",           name_ru: "Пенза",           lat: 53.194546,   lng: 45.018316,  status: "ready" },
+  { name_en: "Volgograd",       name_ru: "Волгоград",       lat: 48.708048,   lng: 44.513303,  status: "ready" },
+  { name_en: "Rostov-on-Don",   name_ru: "Ростов-на-Дону",  lat: 47.235714,   lng: 39.701505,  status: "ready" },
+  { name_en: "Krasnodar",       name_ru: "Краснодар",       lat: 45.039267,   lng: 38.987221,  status: "ready" },
+  { name_en: "Sochi",           name_ru: "Сочи",            lat: 43.585525,   lng: 39.723062,  status: "ready" },
+  { name_en: "Grozny",          name_ru: "Грозный",         lat: 43.318014,   lng: 45.698291,  status: "ready" },
 
   /* Kazakhstan / Central Asia (ready) */
   { name_en: "Ozinky",     name_ru: "Озинки",        lat: 51.1978445, lng: 49.698489,  status: "ready" },
@@ -149,6 +155,16 @@ const PATHS = [
   { status: "soon", waypoints: [
     [43.2171382, 76.8040831], [43.8669604, 77.0529258],
     [46.2366732, 78.9311885], [46.95559, 79.659933]
+  ]},
+  /* flightPath8 — Frankfurt → Voronezh → Penza → Saratov (international transit from reference map) */
+  { status: "ready", waypoints: [
+    [50.1109221, 8.6821267], [51.6754914, 39.173863],
+    [53.194546, 45.018316], [51.533106, 46.029828]
+  ]},
+  /* flightPath9 — Saratov → Volgograd → Rostov-on-Don → Krasnodar → Sochi → Grozny */
+  { status: "ready", waypoints: [
+    [51.533106, 46.029828], [48.708048, 44.513303], [47.235714, 39.701505],
+    [45.039267, 38.987221], [43.585525, 39.723062], [43.318014, 45.698291]
   ]}
 ];
 

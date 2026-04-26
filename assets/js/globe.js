@@ -126,7 +126,7 @@
       .pointsData([...staticPoints(), ...movers.map(moverToPoint)])
       .pointAltitude((d) => (d.kind === "mover" ? 0.012 : 0.005))
       .pointRadius((d) => d.size)
-      .pointResolution(6)
+      .pointResolution(12)
       .labelsData(popsData)
       .labelLat((d) => d.lat)
       .labelLng((d) => d.lng)
@@ -143,6 +143,12 @@
       .ringAltitude(0.005);
 
     paint(globe);
+    if (typeof globe.renderer === "function") {
+      const renderer = globe.renderer();
+      if (renderer && typeof renderer.setPixelRatio === "function") {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      }
+    }
 
     const ctrl = globe.controls();
     ctrl.enableDamping = true;
@@ -153,8 +159,8 @@
     ctrl.autoRotateSpeed = opts.autoRotateSpeed || 0.35;
     ctrl.enableZoom = !!opts.enableZoom;
     ctrl.enablePan = false;
-    ctrl.minDistance = 240;
-    ctrl.maxDistance = 520;
+    ctrl.minDistance = 80;
+    ctrl.maxDistance = 700;
 
     let wasAutoRotate = ctrl.autoRotate;
     ctrl.addEventListener("start", () => {
@@ -258,7 +264,7 @@
       autoRotate: true,
       autoRotateSpeed: 0.3,
       enableZoom: false,
-      altitude: 2.05,
+      altitude: 1.72,
       showGraticules: true,
       showRings: false,
       moverStride: 5,
@@ -273,7 +279,7 @@
       autoRotate: true,
       autoRotateSpeed: 0.18,
       enableZoom: true,
-      altitude: 2.28,
+      altitude: 1.35,
       showGraticules: true,
       showRings: true,
       moverStride: 3,

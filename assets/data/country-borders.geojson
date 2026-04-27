@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type":"Feature","properties":{"ADMIN":"Russia"},"geometry":{"type":"Polygon","coordinates":[[[20,42],[20,82],[180,82],[180,42],[20,42]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Kazakhstan"},"geometry":{"type":"Polygon","coordinates":[[[46,40],[46,56],[87,56],[87,40],[46,40]]]}},
+    {"type":"Feature","properties":{"ADMIN":"China"},"geometry":{"type":"Polygon","coordinates":[[[74,18],[74,53],[135,53],[135,18],[74,18]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Mongolia"},"geometry":{"type":"Polygon","coordinates":[[[87,41],[87,53],[120,53],[120,41],[87,41]]]}},
+    {"type":"Feature","properties":{"ADMIN":"India"},"geometry":{"type":"Polygon","coordinates":[[[68,7],[68,36],[90,36],[90,7],[68,7]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Turkey"},"geometry":{"type":"Polygon","coordinates":[[[26,36],[26,42],[45,42],[45,36],[26,36]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Iran"},"geometry":{"type":"Polygon","coordinates":[[[44,25],[44,40],[63,40],[63,25],[44,25]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Germany"},"geometry":{"type":"Polygon","coordinates":[[[5,47],[5,55],[15,55],[15,47],[5,47]]]}},
+    {"type":"Feature","properties":{"ADMIN":"France"},"geometry":{"type":"Polygon","coordinates":[[[-5,42],[-5,51],[8,51],[8,42],[-5,42]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Spain"},"geometry":{"type":"Polygon","coordinates":[[[-10,36],[-10,44],[4,44],[4,36],[-10,36]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Italy"},"geometry":{"type":"Polygon","coordinates":[[[7,37],[7,47],[18,47],[18,37],[7,37]]]}},
+    {"type":"Feature","properties":{"ADMIN":"United Kingdom"},"geometry":{"type":"Polygon","coordinates":[[[-8,50],[-8,59],[2,59],[2,50],[-8,50]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Norway"},"geometry":{"type":"Polygon","coordinates":[[[4,58],[4,71],[32,71],[32,58],[4,58]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Sweden"},"geometry":{"type":"Polygon","coordinates":[[[11,55],[11,69],[24,69],[24,55],[11,55]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Finland"},"geometry":{"type":"Polygon","coordinates":[[[20,60],[20,70],[32,70],[32,60],[20,60]]]}},
+    {"type":"Feature","properties":{"ADMIN":"United States of America"},"geometry":{"type":"Polygon","coordinates":[[[-125,25],[-125,49],[-66,49],[-66,25],[-125,25]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Canada"},"geometry":{"type":"Polygon","coordinates":[[[-140,49],[-140,70],[-50,70],[-50,49],[-140,49]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Mexico"},"geometry":{"type":"Polygon","coordinates":[[[-117,15],[-117,33],[-86,33],[-86,15],[-117,15]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Brazil"},"geometry":{"type":"Polygon","coordinates":[[[-74,-34],[-74,5],[-34,5],[-34,-34],[-74,-34]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Argentina"},"geometry":{"type":"Polygon","coordinates":[[[-73,-55],[-73,-21],[-53,-21],[-53,-55],[-73,-55]]]}},
+    {"type":"Feature","properties":{"ADMIN":"South Africa"},"geometry":{"type":"Polygon","coordinates":[[[16,-35],[16,-22],[33,-22],[33,-35],[16,-35]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Australia"},"geometry":{"type":"Polygon","coordinates":[[[113,-44],[113,-10],[154,-10],[154,-44],[113,-44]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Japan"},"geometry":{"type":"Polygon","coordinates":[[[129,31],[129,45],[146,45],[146,31],[129,31]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Indonesia"},"geometry":{"type":"Polygon","coordinates":[[[95,-11],[95,6],[141,6],[141,-11],[95,-11]]]}},
+    {"type":"Feature","properties":{"ADMIN":"Saudi Arabia"},"geometry":{"type":"Polygon","coordinates":[[[34,15],[34,33],[56,33],[56,15],[34,15]]]}}
+  ]
+}

@@ -21,6 +21,7 @@
 
   const { POPs, CITIES, SEGMENTS } = window.MMTS_NETWORK;
   const BORDER_DATA_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+  const COUNTRY_NAMES_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.tsv";
   const UKRAINE_NAMES = new Set(["ukraine", "украина"]);
   /* Must match globe.gl's arcAltitudeAutoScale call below – this scale
      also controls the apex of the parabola the comet rides. */
@@ -93,18 +94,52 @@
   async function loadCountryBorders() {
     if (!window.topojson || typeof window.topojson.feature !== "function") return [];
     try {
-      const res = await fetch(BORDER_DATA_URL, { cache: "force-cache" });
-      if (!res.ok) return [];
-      const topo = await res.json();
+      const [topoRes, namesRes] = await Promise.all([
+        fetch(BORDER_DATA_URL, { cache: "force-cache" }),
+        fetch(COUNTRY_NAMES_URL, { cache: "force-cache" })
+      ]);
+      if (!topoRes.ok || !namesRes.ok) return [];
+      const topo = await topoRes.json();
+      const namesTsv = await namesRes.text();
+      const namesById = new Map(
+        namesTsv
+          .trim()
+          .split(/\r?\n/)
+          .slice(1)
+          .map((row) => {
+            const [id, name] = row.split("\t");
+            return [String(id).trim(), String(name || "").trim()];
+          })
+      );
       const features = window.topojson.feature(topo, topo.objects.countries).features || [];
       return features.filter((f) => {
-        const p = f?.properties || {};
-        const name = String(p.ADMIN || p.NAME || p.name || p.NAME_LONG || "").trim().toLowerCase();
+        const fId = String(f?.id ?? "").trim();
+        const name = String(namesById.get(fId) || "").trim();
+        if (!f.properties) f.properties = {};
+        f.properties.name = name;
         return !UKRAINE_NAMES.has(name);
       });
     } catch (_err) {
       return [];
     }
+  }
+
+  function featureCenter(feature) {
+    const geom = feature && feature.geometry;
+    if (!geom || !geom.coordinates) return null;
+    const points = [];
+    const pull = (coords) => {
+      if (!Array.isArray(coords)) return;
+      if (typeof coords[0] === "number" && typeof coords[1] === "number") {
+        points.push([coords[0], coords[1]]);
+        return;
+      }
+      coords.forEach(pull);
+    };
+    pull(geom.coordinates);
+    if (!points.length) return null;
+    const sum = points.reduce((acc, p) => [acc[0] + p[0], acc[1] + p[1]], [0, 0]);
+    return { lng: sum[0] / points.length, lat: sum[1] / points.length };
   }
 
   async function build(el, opts) {
@@ -195,6 +230,11 @@
       .htmlAltitude(0.012)
       .htmlElement((d) => {
         const node = document.createElement("div");
+        if (d.kind === "country") {
+          node.className = "globe-country-label";
+          node.textContent = d.name;
+          return node;
+        }
         node.className = "globe-html-label";
         node.textContent = lang() === "ru" ? d.ru : d.en;
         /* Store the live DOM node back on the datum so we can rewrite text
@@ -208,10 +248,23 @@
 
     const borderFeatures = await loadCountryBorders();
     if (borderFeatures.length) {
+      const countryLabels = borderFeatures
+        .map((feature) => {
+          const center = featureCenter(feature);
+          if (!center) return null;
+          return {
+            kind: "country",
+            name: feature?.properties?.name || "",
+            lat: center.lat,
+            lng: center.lng
+          };
+        })
+        .filter((d) => d && d.name);
       globe
         .polygonsData(borderFeatures)
         .polygonAltitude(0.0012)
-        .polygonsTransitionDuration(0);
+        .polygonsTransitionDuration(0)
+        .htmlElementsData([...popsView, ...countryLabels]);
     }
 
     paint(globe);

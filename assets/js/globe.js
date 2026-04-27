@@ -20,6 +20,8 @@
   }
 
   const { POPs, CITIES, SEGMENTS } = window.MMTS_NETWORK;
+  const BORDER_DATA_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+  const UKRAINE_NAMES = new Set(["ukraine", "украина"]);
   /* Must match globe.gl's arcAltitudeAutoScale call below – this scale
      also controls the apex of the parabola the comet rides. */
   const ARC_ALT_SCALE = 0.5;
@@ -58,6 +60,7 @@
     const point    = cssVar("--globe-point")|| "#6ff5dd";
     const atmos    = cssVar("--globe-atmosphere") || "#2adfc3";
     const surface  = cssVar("--globe-color") || "#0d1218";
+    const border   = cssVar("--globe-graticule") || "rgba(255,255,255,0.2)";
     const assets   = themeAssets();
 
     const mat = globe.globeMaterial();
@@ -74,6 +77,9 @@
       .bumpImageUrl(assets.bumpTexture)
       .atmosphereColor(atmos)
       .atmosphereAltitude(0.17)
+      .polygonCapColor(() => "rgba(0,0,0,0)")
+      .polygonSideColor(() => "rgba(0,0,0,0)")
+      .polygonStrokeColor(() => border)
       .arcColor((d) => {
         if (d.role === "comet") {
           /* brighter, almost-white tint for the "packet" so it pops on the line */
@@ -84,7 +90,24 @@
       .pointColor(() => point);
   }
 
-  function build(el, opts) {
+  async function loadCountryBorders() {
+    if (!window.topojson || typeof window.topojson.feature !== "function") return [];
+    try {
+      const res = await fetch(BORDER_DATA_URL, { cache: "force-cache" });
+      if (!res.ok) return [];
+      const topo = await res.json();
+      const features = window.topojson.feature(topo, topo.objects.countries).features || [];
+      return features.filter((f) => {
+        const p = f?.properties || {};
+        const name = String(p.ADMIN || p.NAME || p.name || p.NAME_LONG || "").trim().toLowerCase();
+        return !UKRAINE_NAMES.has(name);
+      });
+    } catch (_err) {
+      return [];
+    }
+  }
+
+  async function build(el, opts) {
     opts = opts || {};
     const lang = () => (document.documentElement.lang === "ru" ? "ru" : "en");
 
@@ -183,6 +206,14 @@
 
       .ringsData([]);
 
+    const borderFeatures = await loadCountryBorders();
+    if (borderFeatures.length) {
+      globe
+        .polygonsData(borderFeatures)
+        .polygonAltitude(0.0012)
+        .polygonsTransitionDuration(0);
+    }
+
     paint(globe);
 
     if (typeof globe.renderer === "function") {
@@ -273,12 +304,12 @@
     return globe;
   }
 
-  function initHero(selector) {
+  async function initHero(selector) {
     const el = document.querySelector(selector || "#globe-hero");
     if (!el) return null;
     return build(el, { enableZoom: false, altitude: 1.85, showGraticules: true });
   }
-  function initInteractive(selector) {
+  async function initInteractive(selector) {
     const el = document.querySelector(selector || "#globe-network");
     if (!el) return null;
     return build(el, { enableZoom: true, altitude: 1.6, showGraticules: true });

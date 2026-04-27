@@ -16,7 +16,7 @@
                  font-src 'self' data:;
                  style-src 'self' 'unsafe-inline';
                  script-src 'self' https://cdn.jsdelivr.net;
-                 connect-src 'self';
+                 connect-src 'self' https://cdn.jsdelivr.net;
                  worker-src 'self' blob:;
                  upgrade-insecure-requests" />
 
@@ -183,6 +183,7 @@
 </footer>
 
 <script defer charset="utf-8" src="https://cdn.jsdelivr.net/npm/globe.gl@2.32.4/dist/globe.gl.min.js" crossorigin="anonymous"></script>
+<script defer charset="utf-8" src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js" crossorigin="anonymous"></script>
 <script defer charset="utf-8" src="assets/js/i18n.js"></script>
 <script defer charset="utf-8" src="assets/js/main.js"></script>
 <script defer charset="utf-8" src="assets/data/network.js"></script>

@@ -8,18 +8,18 @@
   const me = document.currentScript;
   const page = me ? me.getAttribute("data-page") : null;
 
-  function start() {
+  async function start() {
     if (!window.MMTS_GLOBE) return; /* globe lib not on this page */
 
     if (page === "home") {
       if (typeof Globe === "function") {
-        window.MMTS_GLOBE.initHero("#globe-hero");
+        await window.MMTS_GLOBE.initHero("#globe-hero");
       }
     }
 
     if (page === "network") {
       if (typeof Globe === "function") {
-        const globe = window.MMTS_GLOBE.initInteractive("#globe-network");
+        const globe = await window.MMTS_GLOBE.initInteractive("#globe-network");
         if (!globe) return;
 
         /* Side-list filtering & focus */

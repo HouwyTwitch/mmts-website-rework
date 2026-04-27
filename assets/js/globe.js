@@ -20,8 +20,10 @@
   }
 
   const { POPs, CITIES, SEGMENTS } = window.MMTS_NETWORK;
-  const BORDER_DATA_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
-  const UKRAINE_NAMES = new Set(["ukraine", "украина"]);
+  const BORDER_DATA_URL  = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+  const LABELS_DATA_URL  = "https://cdn.jsdelivr.net/npm/world-countries@4/countries.json";
+  const UKRAINE_NAMES    = new Set(["ukraine", "украина"]);
+  const UKRAINE_CCN3     = "804";
   /* Must match globe.gl's arcAltitudeAutoScale call below – this scale
      also controls the apex of the parabola the comet rides. */
   const ARC_ALT_SCALE = 0.5;
@@ -87,7 +89,8 @@
         }
         return d.status === "ready" ? arcReady : arcSoon;
       })
-      .pointColor(() => point);
+      .pointColor(() => point)
+      .labelColor(() => assets.isLight ? "rgba(10,20,40,0.72)" : "rgba(255,255,255,0.65)");
   }
 
   async function loadCountryBorders() {
@@ -102,6 +105,24 @@
         const name = String(p.ADMIN || p.NAME || p.name || p.NAME_LONG || "").trim().toLowerCase();
         return !UKRAINE_NAMES.has(name);
       });
+    } catch (_err) {
+      return [];
+    }
+  }
+
+  async function loadCountryLabels() {
+    try {
+      const res = await fetch(LABELS_DATA_URL, { cache: "force-cache" });
+      if (!res.ok) return [];
+      const list = await res.json();
+      return list
+        .filter((c) => c.ccn3 !== UKRAINE_CCN3 && Array.isArray(c.latlng) && c.latlng.length === 2)
+        .map((c) => ({
+          lat: c.latlng[0],
+          lng: c.latlng[1],
+          name_en: c.name.common,
+          name_ru: (c.translations && c.translations.rus && c.translations.rus.common) || c.name.common
+        }));
     } catch (_err) {
       return [];
     }
@@ -206,12 +227,29 @@
 
       .ringsData([]);
 
-    const borderFeatures = await loadCountryBorders();
+    const [borderFeatures, countryLabels] = await Promise.all([
+      loadCountryBorders(),
+      loadCountryLabels()
+    ]);
+
     if (borderFeatures.length) {
       globe
         .polygonsData(borderFeatures)
         .polygonAltitude(0.0012)
         .polygonsTransitionDuration(0);
+    }
+
+    if (countryLabels.length) {
+      globe
+        .labelsData(countryLabels)
+        .labelLat((d) => d.lat)
+        .labelLng((d) => d.lng)
+        .labelText((d) => lang() === "ru" ? d.name_ru : d.name_en)
+        .labelSize(0.4)
+        .labelDotRadius(0)
+        .labelAltitude(0.002)
+        .labelResolution(2)
+        .labelsTransitionDuration(0);
     }
 
     paint(globe);
@@ -261,8 +299,11 @@
       }));
     });
 
-    /* Theme reactivity */
-    document.addEventListener("mmts:themechange", () => paint(globe));
+    /* Theme reactivity – repaint colors and re-bake label sprites */
+    document.addEventListener("mmts:themechange", () => {
+      paint(globe);
+      if (countryLabels.length) globe.labelsData([...countryLabels]);
+    });
 
     /* Language reactivity – rewrite text on the LIVE label nodes; do not
        touch htmlElementsData, otherwise three-globe spawns duplicates. */
@@ -271,7 +312,7 @@
       popsView.forEach((p) => {
         if (p._domEl) p._domEl.textContent = cur === "ru" ? p.ru : p.en;
       });
-      cityView.forEach((c) => { /* no DOM but update for tooltips/clicks */ });
+      if (countryLabels.length) globe.labelsData([...countryLabels]);
     });
 
     /* Single smooth ease-in-out tween – no zoom-out → zoom-in pop. */

@@ -20,7 +20,7 @@
   }
 
   const { POPs, CITIES, SEGMENTS } = window.MMTS_NETWORK;
-  const BORDER_DATA_URL = "assets/data/country-borders.geojson";
+  const BORDER_DATA_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
   const UKRAINE_NAMES = new Set(["ukraine", "украина"]);
   /* Must match globe.gl's arcAltitudeAutoScale call below – this scale
      also controls the apex of the parabola the comet rides. */
@@ -91,14 +91,15 @@
   }
 
   async function loadCountryBorders() {
+    if (!window.topojson || typeof window.topojson.feature !== "function") return [];
     try {
       const res = await fetch(BORDER_DATA_URL, { cache: "force-cache" });
       if (!res.ok) return [];
-      const json = await res.json();
-      const features = Array.isArray(json?.features) ? json.features : [];
+      const topo = await res.json();
+      const features = window.topojson.feature(topo, topo.objects.countries).features || [];
       return features.filter((f) => {
         const p = f?.properties || {};
-        const name = String(p.ADMIN || p.NAME || p.name || "").trim().toLowerCase();
+        const name = String(p.ADMIN || p.NAME || p.name || p.NAME_LONG || "").trim().toLowerCase();
         return !UKRAINE_NAMES.has(name);
       });
     } catch (_err) {

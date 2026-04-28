@@ -89,8 +89,7 @@
         }
         return d.status === "ready" ? arcReady : arcSoon;
       })
-      .pointColor(() => point)
-      .labelColor(() => assets.isLight ? "rgba(10,20,40,0.72)" : "rgba(255,255,255,0.65)");
+      .pointColor(() => point);
   }
 
   async function loadCountryBorders() {
@@ -210,14 +209,19 @@
         return country ? `${name}\n${country}` : name;
       })
 
-      /* === HTML LABELS for PoPs only (clean text bubbles) === */
+      /* === HTML LABELS for PoPs + country names === */
       .htmlElementsData(popsView)
       .htmlLat((d) => d.lat).htmlLng((d) => d.lng)
-      .htmlAltitude(0.012)
+      .htmlAltitude((d) => d.kind === "pop" ? 0.012 : 0.003)
       .htmlElement((d) => {
         const node = document.createElement("div");
-        node.className = "globe-html-label";
-        node.textContent = lang() === "ru" ? d.ru : d.en;
+        if (d.kind === "pop") {
+          node.className = "globe-html-label";
+          node.textContent = lang() === "ru" ? d.ru : d.en;
+        } else {
+          node.className = "globe-html-country-label";
+          node.textContent = lang() === "ru" ? d.name_ru : d.name_en;
+        }
         /* Store the live DOM node back on the datum so we can rewrite text
            on language change WITHOUT touching the data binding (which would
            cause three-globe to spawn duplicate elements). */
@@ -240,16 +244,7 @@
     }
 
     if (countryLabels.length) {
-      globe
-        .labelsData(countryLabels)
-        .labelLat((d) => d.lat)
-        .labelLng((d) => d.lng)
-        .labelText((d) => lang() === "ru" ? d.name_ru : d.name_en)
-        .labelSize(0.4)
-        .labelDotRadius(0)
-        .labelAltitude(0.002)
-        .labelResolution(2)
-        .labelsTransitionDuration(0);
+      globe.htmlElementsData([...popsView, ...countryLabels]);
     }
 
     paint(globe);
@@ -299,11 +294,8 @@
       }));
     });
 
-    /* Theme reactivity – repaint colors and re-bake label sprites */
-    document.addEventListener("mmts:themechange", () => {
-      paint(globe);
-      if (countryLabels.length) globe.labelsData([...countryLabels]);
-    });
+    /* Theme reactivity – repaint colors; HTML country labels adapt via CSS. */
+    document.addEventListener("mmts:themechange", () => { paint(globe); });
 
     /* Language reactivity – rewrite text on the LIVE label nodes; do not
        touch htmlElementsData, otherwise three-globe spawns duplicates. */
@@ -312,7 +304,9 @@
       popsView.forEach((p) => {
         if (p._domEl) p._domEl.textContent = cur === "ru" ? p.ru : p.en;
       });
-      if (countryLabels.length) globe.labelsData([...countryLabels]);
+      countryLabels.forEach((c) => {
+        if (c._domEl) c._domEl.textContent = cur === "ru" ? c.name_ru : c.name_en;
+      });
     });
 
     /* Single smooth ease-in-out tween – no zoom-out → zoom-in pop. */

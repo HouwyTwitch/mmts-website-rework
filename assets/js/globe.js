@@ -266,6 +266,7 @@
     ctrl.autoRotate = false;
     ctrl.autoRotateSpeed = 0;
     ctrl.enableZoom = !!opts.enableZoom;
+    ctrl.enableRotate = opts.enableRotate !== false;
     ctrl.enablePan = false;
     ctrl.minDistance = 105;
     ctrl.maxDistance = 800;
@@ -350,7 +351,7 @@
   async function initInteractive(selector) {
     const el = document.querySelector(selector || "#globe-network");
     if (!el) return null;
-    return build(el, { enableZoom: true, altitude: 1.6, showGraticules: true });
+    return build(el, { enableZoom: false, enableRotate: false, altitude: 1.6, showGraticules: true });
   }
 
   window.MMTS_GLOBE = { initHero, initInteractive };

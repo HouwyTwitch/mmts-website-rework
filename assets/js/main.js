@@ -102,6 +102,7 @@
       try {
         const url = new URL(href, location.href);
         if (url.origin !== location.origin) return false;
+        if (url.pathname === location.pathname) return false;
         if (!/\.html?$/i.test(url.pathname) && url.pathname !== "/") return false;
         return true;
       } catch (e) { return false; }

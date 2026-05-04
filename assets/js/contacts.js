@@ -58,7 +58,12 @@
       "?subject=" + encodeURIComponent(subj) +
       "&body=" + encodeURIComponent(body);
 
-    window.location.href = url;
+    const a = document.createElement("a");
+    a.href = url;
+    a.style.cssText = "position:fixed;opacity:0;pointer-events:none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { if (a.parentNode) a.parentNode.removeChild(a); }, 1000);
 
     ok.classList.add("is-on");
     form.reset();

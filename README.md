@@ -2,6 +2,8 @@
 
 Static, framework-free redesign of [mmts.su](https://mmts.su).
 
+<img width="1920" height="950" alt="image" src="https://github.com/user-attachments/assets/23e756fc-88d3-4563-aba4-f39174335581" />
+
 ## Highlights
 
 - **Dark / Light theme.** Default = system preference. Persists via `localStorage`. Sync-applied in `<head>` to avoid FOUC.

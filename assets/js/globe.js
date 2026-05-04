@@ -243,7 +243,7 @@
         .polygonsTransitionDuration(0);
     }
 
-    if (countryLabels.length) {
+    if (countryLabels.length && opts.showCountryLabels !== false) {
       globe.htmlElementsData([...popsView, ...countryLabels]);
     }
 
@@ -257,6 +257,7 @@
     }
 
     /* Controls – auto-rotate disabled everywhere. */
+    if (typeof globe.autoRotate === "function") globe.autoRotate(false);
     const ctrl = globe.controls();
     ctrl.enableDamping = true;
     ctrl.dampingFactor = 0.09;
@@ -304,9 +305,11 @@
       popsView.forEach((p) => {
         if (p._domEl) p._domEl.textContent = cur === "ru" ? p.ru : p.en;
       });
-      countryLabels.forEach((c) => {
-        if (c._domEl) c._domEl.textContent = cur === "ru" ? c.name_ru : c.name_en;
-      });
+      if (opts.showCountryLabels !== false) {
+        countryLabels.forEach((c) => {
+          if (c._domEl) c._domEl.textContent = cur === "ru" ? c.name_ru : c.name_en;
+        });
+      }
     });
 
     /* Single smooth ease-in-out tween – no zoom-out → zoom-in pop. */
@@ -342,7 +345,7 @@
   async function initHero(selector) {
     const el = document.querySelector(selector || "#globe-hero");
     if (!el) return null;
-    return build(el, { enableZoom: false, altitude: 1.85, showGraticules: true });
+    return build(el, { enableZoom: false, altitude: 1.85, showGraticules: true, showCountryLabels: false });
   }
   async function initInteractive(selector) {
     const el = document.querySelector(selector || "#globe-network");

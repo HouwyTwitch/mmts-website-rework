@@ -58,15 +58,7 @@
       "?subject=" + encodeURIComponent(subj) +
       "&body=" + encodeURIComponent(body);
 
-    /* Use a temp anchor with rel/noopener to avoid window.opener leakage */
-    const a = document.createElement("a");
-    a.href = url;
-    a.rel = "noopener noreferrer";
-    a.target = "_self";
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    window.location.href = url;
 
     ok.classList.add("is-on");
     form.reset();
